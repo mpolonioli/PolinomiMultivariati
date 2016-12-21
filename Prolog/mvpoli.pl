@@ -9,7 +9,7 @@
 
 %%	is_varpower(VarPower)
 %
-%	vero se VarPower è un termine che rappresenta una variabile
+%	vero se VarPower Ã¨ un termine che rappresenta una variabile
 
 is_varpower(v(Power, VarSymbol)) :-
 	integer(Power),
@@ -19,7 +19,7 @@ is_varpower(v(Power, VarSymbol)) :-
 
 %%	is_monomial(Monomial)
 %
-%	vero se Monomial è un termine che rappresenta un monomio
+%	vero se Monomial Ã¨ un termine che rappresenta un monomio
 
 is_monomial(m(C, TD, VPs)) :-
 	    integer(TD),
@@ -32,7 +32,7 @@ is_monomial(m(C, TD, VPs)) :-
 
 %%	is_polynomial(Poly)
 %
-%	vero se Poly è un termine che rappresenta un polinomio
+%	vero se Poly Ã¨ un termine che rappresenta un polinomio
 
 is_polynomial(poly(Monomials)) :-
 	is_list(Monomials),
@@ -41,7 +41,7 @@ is_polynomial(poly(Monomials)) :-
 
 %%	calc_total_degree(VarPower, Acc, Result)
 %
-%	vero quando Result è la somma delle potenze che compaioni in
+%	vero quando Result Ã¨ la somma delle potenze che compaioni in
 %	Varpower
 
 % caso base: variabili terminate
@@ -57,7 +57,7 @@ calc_total_degree([v(P, _) | VPs], Acc, R) :-
 %%      as_monomial(Expression, Monomial)
 %
 %	vero quando Monomial `e il termine che rappresenta il
-%	monomio risultante dal “parsing” dell’espressione Expression
+%	monomio risultante dal â€œparsingâ€ dellâ€™espressione Expression
 
 as_monomial(Input, m(C, TD, SVP)) :-
 	parse_monomial(Input, [], 0, TD, VP, C),
@@ -67,7 +67,7 @@ as_monomial(Input, m(C, TD, SVP)) :-
 %%      as_polynomial(Expression, Polynomial)
 %
 %	vero quando Polynomial `e il termine che rappresenta il
-%	polinomio risultante dal “parsing” dell’espressione Expression
+%	polinomio risultante dal â€œparsingâ€ dellâ€™espressione Expression
 
 as_polynomial(Input, poly(SSMs)) :-
 	parse_polynomial(Input, [], Ms),
@@ -75,7 +75,7 @@ as_polynomial(Input, poly(SSMs)) :-
 
 %%	sort_Monomials(Monomials, SortedMonomials)
 %
-%	vero quando SortedMonomials è la lista dei monomi Monomials
+%	vero quando SortedMonomials Ã¨ la lista dei monomi Monomials
 %	ordinata secondo le specifiche
 
 sort_monomials(Ms, R) :-
@@ -87,7 +87,7 @@ sort_monomials(Ms, R) :-
 
 %%	create_pairs_m_v(Monomials, App, PairsMV)
 %
-%	vero quando PairsMV è una lista di coppie (Monomial, Variables)
+%	vero quando PairsMV Ã¨ una lista di coppie (Monomial, Variables)
 %	creata con i monomi contenuti in Monomials
 
 % caso base : ho terminato i monomi
@@ -102,7 +102,7 @@ create_pairs_m_v([m(C, TD, VP) | Ms], App, R) :-
 
 %%	get_ms_from_pairs_m_v(PairsMV, App, Monomials)
 %
-%	vero quando Monomials è la lista dei monomi che compaiono nelle
+%	vero quando Monomials Ã¨ la lista dei monomi che compaiono nelle
 %	coppie contenute nella lista PairsMV
 
 % caso base: ho terminato le coppie
@@ -116,11 +116,11 @@ get_ms_from_pairs_m_v([(M, _) | Pairs], App, R) :-
 
 %%	sort_playoff_ms(Monomials, Result)
 %
-%	vero quando Result è la lista dei monomi che compaiono in
+%	vero quando Result Ã¨ la lista dei monomi che compaiono in
 %	Monomials con i monomi con stesso grado e stesse
 %	variabili ordinati secondo le specifiche
 %
-%	Monomials deve già essere ordinata per grado totale
+%	Monomials deve giÃ  essere ordinata per grado totale
 
 % caso base: lista di monomi vuota
 sort_playoff_ms([], []) :- !.
@@ -138,13 +138,13 @@ sort_playoff_ms([M | Ms], R) :-
 %
 %	predicato ausiliario di sort_playoff_ms(Monomials, Result)
 %
-%	Monomial è il primo monomio di Monomials e RestMs è il resto
+%	Monomial Ã¨ il primo monomio di Monomials e RestMs Ã¨ il resto
 %	di tale lista
 %
 %	App1 tiene in memoria i monomi che sono stati confrontati fin
 %	ora con Monomial e >
 %
-%	App2 è la lista ordinata dei monomi incortrati
+%	App2 Ã¨ la lista ordinata dei monomi incortrati
 
 % caso base: ho terminato i monomi da confrontare
 sort_playoff_ms(M, [], [], App2, R) :-
@@ -178,7 +178,7 @@ sort_playoff_ms(m(C1, TD1, VP1), [m(C2, TD1, VP2) | Ms], App1, App2, R) :-
 	sort_playoff_ms(m(C2, TD1, VP2), Ms, NApp1, App2, R).
 
 % ho trovato un monomio con grado maggiore di quello che sto
-% considerando che è l'ultimo o l'unico del gruppo con cui devo
+% considerando che Ã¨ l'ultimo o l'unico del gruppo con cui devo
 % spareggiarlo
 sort_playoff_ms(m(C1, TD1, VP1), [m(C2, TD2, VP2) | Ms], [], App2, R) :-
 	TD1 \= TD2,
@@ -201,7 +201,7 @@ sort_playoff_ms(m(C1, TD1, VP1),
 	sort_playoff_ms(m(C3, TD3, VP3), NMs, [], NApp2, R).
 
 % ho trovato un monomio con grado uguale di quello che sto
-% considerando ma simboli di varibile diversi ed è l'ultimo o l'unico
+% considerando ma simboli di varibile diversi ed Ã¨ l'ultimo o l'unico
 % del gruppo con cui devo spareggiarlo
 sort_playoff_ms(m(C1, TD1, VP1), [m(C2, TD1, VP2) | Ms], [], App2, R) :-
 	extract_variables(VP1, [], Variables1),
@@ -260,9 +260,9 @@ varpower_min_or_equal([v(P, S) | VPs1], [v(P, S) | VPs2], R) :-
 
 %%	semplify_polynomial(Poly1, Poly2)
 %
-%	vero se Poly2 è Poly1 semplificato
+%	vero se Poly2 Ã¨ Poly1 semplificato
 
-% la semplifica della lista vuota è la lista vuota
+% la semplifica della lista vuota Ã¨ la lista vuota
 semplify_polynomial([], []) :- !.
 
 % chiama semplify_polynomial/5 e zero_eater_m/3 per togliere eventuali
@@ -282,19 +282,19 @@ semplify_polynomial([m(C, TD, VP) | Ms], R) :-
 %	Monomial rappresenta il monomio da semplificare con la lista di
 %	monomi contenuti in Monomials
 %
-%	App è una lista d'apoggio in cui vengono concatenati soltanto i
+%	App Ã¨ una lista d'apoggio in cui vengono concatenati soltanto i
 %	monomi che vanno presi in considerazione per una successiva
 %	semplifica
 %
-%	Result è la lista dei monomi semplificati
+%	Result Ã¨ la lista dei monomi semplificati
 
-% caso base: la semplifica del monomio è terminata e non mi rimangono
+% caso base: la semplifica del monomio Ã¨ terminata e non mi rimangono
 % monomi da seplificare
 semplify_polynomial(m(C, TD, VP), [], [], MsApp, RMs) :-
 	!,
 	append(MsApp, [m(C, TD, VP)], RMs).
 
-% la semplifica del monomio è terminata e ho ancora monomi da
+% la semplifica del monomio Ã¨ terminata e ho ancora monomi da
 % semplificare
 semplify_polynomial(m(C, TD, VP), [], [m(C1, TD1, VP1) | Ms], MsApp, R) :-
 	!,
@@ -319,7 +319,7 @@ semplify_polynomial(m(C1, TD1, VP1), [m(C2, TD2, VP2) | Ms], App, MsApp, RMs) :-
 
 %%	semplify_varpower(VarPower, Result)
 %
-%	vero quando Result è la lista delle variabili che compaioni in
+%	vero quando Result Ã¨ la lista delle variabili che compaioni in
 %	VarPower semplificate e riordinate secondo le specifiche
 
 % ordino e chiamo semplify_varpower/3
@@ -362,7 +362,7 @@ semplify_varpower([], [], []) :- !.
 
 %%	zero_eater_vp(VarPower, App, Result)
 %
-%	vero se Result è la lista delle variabili che compaioni in
+%	vero se Result Ã¨ la lista delle variabili che compaioni in
 %	VarPower tranne quelle con esponente nullo
 
 % ho finito la lista
@@ -385,7 +385,7 @@ zero_eater_vp([v(P, S) | VPs], App, R) :-
 
 %%	zero_eater_m(Monomials, App, Result)
 %
-%	vero se Result è la lista dei monomi che compaioni in Monomials
+%	vero se Result Ã¨ la lista dei monomi che compaioni in Monomials
 %	tranne quelli con coefficente nullo
 
 % ho finito la lista
@@ -412,7 +412,7 @@ zero_eater_m([m(C, TD, VP) | Ms], App, R) :-
 %%	parse_monomial(Input, AppVP, AppTD, TotalDegree, VarPower,
 %		       Coefficent)
 %
-%	vero quando Input è un monomio scritto nella forma corretta
+%	vero quando Input Ã¨ un monomio scritto nella forma corretta
 %	TotalDegree il suo grado totale
 %
 %	VarPower la lista delle sue variabili nella forma v(P, S)
@@ -516,7 +516,7 @@ parse_monomial(Input, RVP, RTD, RTD, RVP, C) :-
 
 %%	parse_polynomial(Input, App, Monomials)
 %
-%	vero se Input è un polinomio scritto correttamente e Monomials
+%	vero se Input Ã¨ un polinomio scritto correttamente e Monomials
 %	la lista dei suoi monomi nella forma [m(C, TD, VP) | Ms]
 
 % ho ancora monomi e quello preso in considerazione ha coefficente "+"
@@ -547,7 +547,7 @@ parse_polynomial(Input, App, RM) :-
 
 %%	is_variable_symbol(Symbol)
 %
-%       vero se Symbol è un simbolo di variabile accettabile
+%       vero se Symbol Ã¨ un simbolo di variabile accettabile
 
 % un numero intero o con virgola
 is_variable_symbol(X) :-
@@ -565,7 +565,7 @@ is_variable_symbol(X) :-
 
 %%	is_number(Number)
 %
-%       vero se Number è un intero o un numero con virgola
+%       vero se Number Ã¨ un intero o un numero con virgola
 
 % numero intero
 is_number(X) :-
@@ -580,7 +580,7 @@ is_number(X) :-
 
 %%	coefficients(Poly, Coefficients)
 %
-%	vero quando Coefficients è una lista dei coefficienti di Poly
+%	vero quando Coefficients Ã¨ una lista dei coefficienti di Poly
 
 % caso base: un polinomio che non ha monomi torna la lista vuota
 coefficients(poly([]), []) :- !.
@@ -621,7 +621,7 @@ coefficients(poly([m(C, _, _) | Ms]), App, R) :-
 
 %%	variables(Poly, Variables)
 %
-%	vero quando Variables è una lista dei simboli di variabile che
+%	vero quando Variables Ã¨ una lista dei simboli di variabile che
 %	appaiono in Poly, senza ripetizioni e ordinate
 %	lessicograficamente
 
@@ -672,7 +672,7 @@ variables(poly([m(_, _, VP) | Ms]), App, R) :-
 
 %%	extract_variables(VarPower, App, Variables)
 %
-%	vero quando Variables è la lista dei simboli delle variabili che
+%	vero quando Variables Ã¨ la lista dei simboli delle variabili che
 %	compaiono in VarPower
 
 % caso base: ho terminato la lista di variabili
@@ -687,7 +687,7 @@ extract_variables([v(_, S) | VPs], App, R) :-
 
 %%	maxdegree(Poly, Degree)
 %
-%       vero quando Degree è il massimo grado dei monomi che appaiono in
+%       vero quando Degree Ã¨ il massimo grado dei monomi che appaiono in
 %       Poly
 
 % input in forma m
@@ -724,7 +724,7 @@ maxdegree(Input, Degree) :-
 
 %%	mindegree(Poly, Degree)
 %
-%	vero quando Degree è il minimo grado dei monomi che
+%	vero quando Degree Ã¨ il minimo grado dei monomi che
 %	appaiono in Poly
 
 % input in forma m
@@ -759,7 +759,7 @@ mindegree(Input, Degree) :-
 
 %%	poly_plus(Poly1, Poly2, Result)
 %
-%       vero quando Result è il polinomio somma di Poly1 + Poly2.
+%       vero quando Result Ã¨ il polinomio somma di Poly1 + Poly2.
 
 % input in forma m, m
 polyplus(m(C1, TD1, VP1), m(C2, TD2, VP2), Result) :-
@@ -797,7 +797,7 @@ polyplus(Input1, Input2, poly(SSMs3)) :-
 
 %%	poly_minus(Poly1, Poly2, Result)
 %
-%       vero quando Result è il polinomio differenza di Poly1 - Poly2.
+%       vero quando Result Ã¨ il polinomio differenza di Poly1 - Poly2.
 
 % input in forma m, m
 polyminus(m(C1, TD1, VP1), m(C2, TD2, VP2), Result) :-
@@ -837,7 +837,7 @@ polyminus(Input1, Input2, poly(SSMs3)) :-
 
 %%	invert_sign(Monomials, App, Result)
 %
-%	vero quando Result è la lista Monomials con i coefficenti
+%	vero quando Result Ã¨ la lista Monomials con i coefficenti
 %	dei monomi con segno invertito
 
 % caso base: ho terminato i monomi da invertire
@@ -854,7 +854,7 @@ invert_sign([m(C, TD, VP) | Ms], App, R) :-
 
 %%	polytimes(Poly1, Poly2, Result)
 %
-%	vero quando Result è il polinomio risultante dalla
+%	vero quando Result Ã¨ il polinomio risultante dalla
 %	moltiplicazione di Poly 1 e Poly2
 
 % input in forma m, m
@@ -922,7 +922,7 @@ polytimes(Poly1, poly([]), poly([])) :-
 %
 %       predcato ausiliario di polyrimes/3
 %
-%	il terzo argomento è necessario per tenere in memoria i monomi
+%	il terzo argomento Ã¨ necessario per tenere in memoria i monomi
 %	devo moltiplicare ogni monomio di Monomials1
 
 % caso base: ho terminato di moltiplicare l'ultimo monomio della prima
@@ -997,7 +997,7 @@ polyval(poly(Monomials), _, 0) :-
 %
 %	prediacto ausiliario di polyval/2
 %
-%	vero quando Result è il risultato del calcolo della lista di
+%	vero quando Result Ã¨ il risultato del calcolo della lista di
 %	monomi Monomials con le variabili sostituite con i corrispettivi
 %	valori contenuti nella lista CoppieKV
 
@@ -1014,7 +1014,7 @@ polyval([], _, _, R, R) :- !.
 
 %%	create_pairs_KV(VariablesValue, Variables, App, R)
 %
-%	vero quando R è una lista di coppie chiave/valore dove le chiavi
+%	vero quando R Ã¨ una lista di coppie chiave/valore dove le chiavi
 %	sono i simboli contenuti nella lista Variables e i valori sono
 %	gli elementi della lista VariablesValue
 
@@ -1033,7 +1033,7 @@ create_pairs_KV(_, [], App, R) :-
 %
 %	predicato ausiliario di polyval/5
 %
-%	vero quando Result è il risultato della moltiplicazione di tutte
+%	vero quando Result Ã¨ il risultato della moltiplicazione di tutte
 %	le variabili contenute in VarPower e sostituite con il loro
 %	corrispettivo valore estratto dalla lista CoppieKV
 
@@ -1239,7 +1239,7 @@ pprint_variables([v(P, S) | []]) :-
 	write(S).
 
 
-% ho più di una variabile con esponente maggiore di 1
+% ho piÃ¹ di una variabile con esponente maggiore di 1
 pprint_variables([v(P, S) | VPs]) :-
 	P > 1,
 	!,
@@ -1249,7 +1249,7 @@ pprint_variables([v(P, S) | VPs]) :-
 	write(' * '),
 	pprint_variables(VPs).
 
-% ho più di una variabile con esponente uguale a 1
+% ho piÃ¹ di una variabile con esponente uguale a 1
 pprint_variables([v(P, S) | VPs]) :-
 	P = 1,
 	!,
