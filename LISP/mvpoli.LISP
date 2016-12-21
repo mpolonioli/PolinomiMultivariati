@@ -8,7 +8,7 @@
 ; Polinomio: (poly monomials)
 
 
-; T se m è un monomio
+; T se m Ã¨ un monomio
 (defun is-monomial (m)
   (and (listp m)
        (eq 'm (first m))
@@ -36,7 +36,7 @@
   (fourth m))
 
 
-; T se vp è una variabile
+; T se vp Ã¨ una variabile
 (defun is-varpower (vp)
   (and (listp vp)
        (eq 'v (first vp))
@@ -58,7 +58,7 @@
   (third vp))
 
 
-; T se p è un polinomio
+; T se p Ã¨ un polinomio
 (defun is-polynomial (p)
   (and (listp p)
        (eq 'poly (first p))
