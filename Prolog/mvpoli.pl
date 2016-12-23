@@ -968,7 +968,7 @@ polyval(Input, VariablesValue, Value) :-
 	Monomials \= [],
 	!,
 	variables(poly(Monomials), Variables),
-	create_CoppieKV(VariablesValue, Variables, [], CoppieKV),
+	create_pairs_KV(VariablesValue, Variables, [], CoppieKV),
 	polyval(Monomials, CoppieKV, 1, 0, Value).
 
 % input in forma "scomoda" con polinomio nullo
@@ -983,7 +983,7 @@ polyval(poly(Monomials), VariablesValue, Value) :-
 	SMs \= [],
 	!,
 	variables(poly(SMs), Variables),
-	create_CoppieKV(VariablesValue, Variables, [], CoppieKV),
+	create_pairs_KV(VariablesValue, Variables, [], CoppieKV),
 	polyval(SMs, CoppieKV, 1, 0, Value).
 
 % input in forma poly con polinomio nullo
@@ -1258,6 +1258,32 @@ pprint_variables([v(P, S) | VPs]) :-
 	pprint_variables(VPs).
 
 %%% end of file polimomi.pl
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
