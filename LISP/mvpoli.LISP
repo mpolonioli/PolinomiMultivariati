@@ -289,18 +289,98 @@
   )
 
 
+; 1   se vps1 = vps2
+; 0   se vps1 < vps2
+; nil se vps1 > vps2
+(defun vars-and-powers<= (vps1 vps2)
+
+  (if (and (every #'is-varpower vps1)
+           (every #'is-varpower vps2))
+
+      (let ((vp1 (first vps1))
+            (vp2 (first vps2)))
+
+        (cond ((and (eq vp1 nil)
+                    (eq vp2 nil))
+               1)
+              
+              ((and (eq vp1 nil)
+                    (not (eq vp2 nil)))
+               0)
+
+              ((and (not (eq vp1 nil))
+                    (eq vp2 nil))
+               nil)
+
+              ((eq (string<= (varpower-symbol vp1) (varpower-symbol vp2)) 0)
+               0)
+
+              ((eq (string<= (varpower-symbol vp1) (varpower-symbol vp2)) nil)
+               nil)
+              
+              ((and (eq (string<= (varpower-symbol vp1) (varpower-symbol vp2)) 1)
+                    (< (varpower-power vp1) (varpower-power vp2)))
+               0)
+
+              ((and (eq (string<= (varpower-symbol vp1) (varpower-symbol vp2)) 1)
+                    (> (varpower-power vp1) (varpower-power vp2)))
+               nil)
+
+              ((and (eq (string<= (varpower-symbol vp1) (varpower-symbol vp2)) 1)
+                    (= (varpower-power vp1) (varpower-power vp2)))
+               (vars-and-powers<= (cdr vps1) (cdr vps2)))
+
+              (T 
+               (error "durante il confronto tra liste di variabili"))
+              ))
+               
+    (error "Input non valido per il confronto tra liste di variabili")
+    ))       
+
+
 ; 1   se m1 = m2
 ; 0   se m1 < m2
 ; nil se m1 > m2
 (defun ms<= (m1 m2)
-  1
-  )
+  
+  (if (and (is-monomial m1)
+           (is-monomial m2))
+      
+      (let ((td1 (monomial-total-degree m1))
+            (td2 (monomial-total-degree m2))
+            (vps1 (monomial-vars-and-powers m1))
+            (vps2 (monomial-vars-and-powers m2)))
+        
+        (cond ((< td1 td2)
+               0)
+
+              ((> td1 td2)
+               nil)
+              
+              ((and (= td1 td2)
+                    (eq (vars-and-powers<= vps1 vps2) 0))
+                    0)
+
+              ((and (= td1 td2)
+                    (eq (vars-and-powers<= vps1 vps2) nil))
+               nil)
+
+              ((and (= td1 td2)
+                    (eq (vars-and-powers<= vps1 vps2) 1))
+               1)
+              
+              (T
+               (error "Durante il confronto tra monomi"))
+              ))
+
+    (error "Input non valido per il confronto tra monomi")
+    ))
 
 
 ; riordina una lista di monomi secondo le specifiche
-(defun sort-monomials (ms)
-  (sort ms #'ms<=)
-  )  
+(defun sort-monomials (monomials)
+  (sort monomials #'ms<=)
+  )
 
 
 ;; end-of-file -- polinomi.LISP
