@@ -283,9 +283,23 @@
   )
 
 
-; elimina monomi con coefficente 0
-(defun zero-eater-m (ms)
-  ms
+; elimina monomi con coefficente 0 da una lista di monomi
+(defun zero-eater-m (ms app)
+  
+  (let ((m (first ms)))
+    
+    (cond ((eq m nil)
+          app)
+    
+          ((= (monomial-coefficent m) 0)
+           (zero-eater-m (cdr ms) app))
+
+          ((not (= (monomial-coefficent m) 0))
+           (zero-eater-m (cdr ms) (append app (list m))))
+          
+          (T
+           (error "durante l'eliminazione dei monomi con coefficente nullo"))
+          ))
   )
 
 
