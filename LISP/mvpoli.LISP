@@ -289,55 +289,75 @@
   )
 
 
+; vps1 e vps2 devono avere simboli di variabile identici e grado totale identico
+; 1   se vps1 = vps2
+; 0   se vps1 < vps2
+; nil se vps1 > vps2
+(defun playoff-vars-and-powers<= (vps1 vps2)
+
+  (let ((vp1 (first vps1))
+        (vp2 (first vps2)))
+    
+    (cond ((and (eq vp1 nil)
+                (eq vp2 nil))
+           1)
+          
+          ((and (eq vp1 nil)
+                (not (eq vp2 nil)))
+           0)
+          
+          ((and (not (eq vp1 nil))
+                (eq vp2 nil))
+           nil)
+          
+          ((< (varpower-power vp1) (varpower-power vp2))
+           0)
+          
+          ((> (varpower-power vp1) (varpower-power vp2))
+           nil)
+          
+          ((= (varpower-power vp1) (varpower-power vp2))
+           (vars-and-powers<= (cdr vps1) (cdr vps2)))
+          
+          (T 
+           (error "durante il confronto tra liste di variabili"))
+          ))
+  )
+
+
+; vps1 e vps2 devono avere grado totale identico e simboli di variabili diversi
 ; 1   se vps1 = vps2
 ; 0   se vps1 < vps2
 ; nil se vps1 > vps2
 (defun vars-and-powers<= (vps1 vps2)
 
-  (if (and (every #'is-varpower vps1)
-           (every #'is-varpower vps2))
-
-      (let ((vp1 (first vps1))
-            (vp2 (first vps2)))
-
-        (cond ((and (eq vp1 nil)
-                    (eq vp2 nil))
-               1)
-              
-              ((and (eq vp1 nil)
-                    (not (eq vp2 nil)))
-               0)
-
-              ((and (not (eq vp1 nil))
-                    (eq vp2 nil))
-               nil)
-
-              ((eq (string<= (varpower-symbol vp1) (varpower-symbol vp2)) 0)
-               0)
-
-              ((eq (string<= (varpower-symbol vp1) (varpower-symbol vp2)) nil)
-               nil)
-              
-              ((and (eq (string<= (varpower-symbol vp1) (varpower-symbol vp2)) 1)
-                    (< (varpower-power vp1) (varpower-power vp2)))
-               0)
-
-              ((and (eq (string<= (varpower-symbol vp1) (varpower-symbol vp2)) 1)
-                    (> (varpower-power vp1) (varpower-power vp2)))
-               nil)
-
-              ((and (eq (string<= (varpower-symbol vp1) (varpower-symbol vp2)) 1)
-                    (= (varpower-power vp1) (varpower-power vp2)))
-               (vars-and-powers<= (cdr vps1) (cdr vps2)))
-
-              (T 
-               (error "durante il confronto tra liste di variabili"))
-              ))
-               
-    (error "Input non valido per il confronto tra liste di variabili")
-    ))       
+  (let ((vp1 (first vps1))
+        (vp2 (first vps2)))
+    
+    (cond ((and (eq vp1 nil)
+                (not (eq vp2 nil)))
+           0)
+          
+          ((and (not (eq vp1 nil))
+                (eq vp2 nil))
+           nil)
+          
+          ((eq (string<= (varpower-symbol vp1) (varpower-symbol vp2)) 0)
+           0)
+          
+          ((eq (string<= (varpower-symbol vp1) (varpower-symbol vp2)) nil)
+           nil)
+          
+          ((eq (string<= (varpower-symbol vp1) (varpower-symbol vp2)) 1)
+           (vars-and-powers<= (cdr vps1) (cdr vps2)))
+          
+          (T 
+           (error "durante il confronto tra liste di variabili"))
+          ))
+    )       
 
 
+; m1 e m2 devono avere variabili ordinate
 ; 1   se m1 = m2
 ; 0   se m1 < m2
 ; nil se m1 > m2
@@ -349,7 +369,9 @@
       (let ((td1 (monomial-total-degree m1))
             (td2 (monomial-total-degree m2))
             (vps1 (monomial-vars-and-powers m1))
-            (vps2 (monomial-vars-and-powers m2)))
+            (vps2 (monomial-vars-and-powers m2))
+            (variables1 (variables m1))
+            (variables2 (variables m2)))
         
         (cond ((< td1 td2)
                0)
@@ -358,16 +380,12 @@
                nil)
               
               ((and (= td1 td2)
-                    (eq (vars-and-powers<= vps1 vps2) 0))
-                    0)
+                    (not (equal variables1 variables2)))
+               (vars-and-powers<= vps1 vps2))
 
               ((and (= td1 td2)
-                    (eq (vars-and-powers<= vps1 vps2) nil))
-               nil)
-
-              ((and (= td1 td2)
-                    (eq (vars-and-powers<= vps1 vps2) 1))
-               1)
+                    (equal variables1 variables2))
+               (playoff-vars-and-powers<= vps1 vps2))
               
               (T
                (error "Durante il confronto tra monomi"))
@@ -382,5 +400,62 @@
   (sort monomials #'ms<=)
   )
 
+
+; data una lista di varpower torna la lista dei simboli di variabile in essa
+; senza ripetizioni e ordinata in ordine lessicografico crescente
+(defun vars-and-powers-variables (vps app)
+  
+  (let ((vp (first vps)))
+    
+    (cond ((is-varpower vp)
+           (vars-and-powers-variables (cdr vps)
+                                      (append app (list (varpower-symbol vp)))))
+          
+          ((eq vp nil)
+           (sort (remove-duplicates app) #'string<=))
+          
+          (T
+           (error "Input non valido per l'estrazione dei simboli di variabile da vps"))
+          ))
+  )
+
+
+; data una lista di monomi torna la lista dei simboli di variabile contenuti in essa
+; senza ripetizioni e ordinata in ordine lessicografico crescente
+(defun monomials-variables (ms app)
+  
+  (let ((m (first ms)))
+    
+    (cond ((eq m nil)
+          ((sort (remove-duplicates app) #'string<=)))
+          
+          ((is-monomial m)
+           (monomials-variables (cdr ms) 
+                                (append app (vars-and-powers-variables 
+                                             (monomial-vars-and-powers m))))
+           )
+
+          (T
+           (error "Input non valido per l'estrazione dei simboli di varabile da ms"))
+          
+          ))
+  )
+    
+    
+
+; dato un polinomio torna la lista dei simboli di variabile contenuti in esso
+; senza ripetizioni in ordine lessicografico crescente
+(defun variables (poly)
+  
+  (cond ((is-monomial poly)
+         (vars-and-powers-variables (monomial-vars-and-powers poly) ()))
+        
+        ((is-polynomial poly)
+         (monomials-variables poly ()))
+        
+        (T
+         (monomials-variables (poly-monomials (as-polynomial poly)) ()))
+        ))
+  
 
 ;; end-of-file -- polinomi.LISP
