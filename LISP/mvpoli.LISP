@@ -23,7 +23,8 @@
 
 ; estrae il coefficente da un monomio
 (defun monomial-coefficient (m)
-  (second m))
+      (second m)
+  )
 
 
 ; estrae il grado totale da un monomio
@@ -535,12 +536,32 @@
     ))
 
 ; data una struttura Monomial, ritorna la lista di variabili Variables
-(defun vars-of (Monomial)
+(defun var-of (monomial)
 
   (if (is-monomial monomial)
       (monomial-variables monomial ())
-    (error "l'input di vars-of deve essere una struttura Monomial"))
+    (error "l'input di var-of deve essere una struttura Monomial"))
   )
-  
+
+; data una struttura Monomial, ritorna il suo grado totale TotalDegree
+(defun monomial-degree (monomial)
+
+  (if (is-monomial monomial)
+      (monomial-total-degree monomial)
+    (error "l'input di monomial-degree deve essere una struttura Monomial")
+    ))
+
+; ritorna la lista ordinata dei monomi che appaiono in poly 
+(defun monomials (poly)
+
+  (cond ((is-monomial poly)
+         (list (semplify-monomial poly)))
+        
+        ((is-polynomial poly)
+         (poly-monomials (semplify-polynomial poly)))
+        
+        (T
+         (poly-monomials (as-polynomial poly)))
+        ))
 
 ;; end-of-file -- polinomi.LISP
