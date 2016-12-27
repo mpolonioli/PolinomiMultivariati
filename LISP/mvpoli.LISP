@@ -407,6 +407,10 @@
           ((and (not (eq vp1 nil))
                 (eq vp2 nil))
            nil)
+
+          ((and (eq vp1 nil)
+                (eq vp2 nil))
+           (playoff-vars-and-powers<= vps1 vps2))
           
           ((eq (string<= (varpower-symbol vp1) (varpower-symbol vp2)) 0)
            0)
