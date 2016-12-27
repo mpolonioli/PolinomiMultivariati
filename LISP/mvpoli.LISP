@@ -296,7 +296,7 @@
   (if (is-polynomial poly)
 
       (let ((ms (sort-monomials (zero-eater-m (semplify-monomials (poly-monomials poly) ()) ()))))
-        (semplify-polynomial-r (first ms) (cdr ms) ())
+        (list 'POLY (zero-eater-m (semplify-polynomial-r (first ms) (cdr ms) ()) ()))
         )
     
     (error "input non valido per la semplifica del polinomio")
