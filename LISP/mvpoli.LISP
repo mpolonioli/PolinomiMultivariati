@@ -31,7 +31,7 @@
   (third m))
 
 
-; estrae la lista di variabili da un monomio
+; estrae la lista di varpowers da un monomio
 (defun monomial-vars-and-powers (m)
   (fourth m))
 
@@ -470,6 +470,13 @@
         (T
          (monomials-variables (poly-monomials (as-polynomial poly)) ()))
         ))
+
+; data una struttura Monomial, ritorna la lista di varpowers Vp-list
+(defun varpowers (monomial)
+  (if (is-monomial monomial)
+      (monomial-vars-and-powers monomial)
+    (error "input non valido per l'estrazione di Vp-list")
+    ))
   
 
 ;; end-of-file -- polinomi.LISP
