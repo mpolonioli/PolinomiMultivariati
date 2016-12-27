@@ -465,7 +465,7 @@
          (vars-and-powers-variables (monomial-vars-and-powers poly) ()))
         
         ((is-polynomial poly)
-         (monomials-variables poly ()))
+         (monomials-variables (poly-monomials poly) ()))
         
         (T
          (monomials-variables (poly-monomials (as-polynomial poly)) ()))
