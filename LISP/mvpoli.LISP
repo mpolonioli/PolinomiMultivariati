@@ -510,8 +510,7 @@
            (error "Input non valido per l'estrazione dei simboli di varabile da ms"))
           
           ))
-  )
-    
+  )    
     
 
 ; dato un polinomio torna la lista dei simboli di variabile contenuti in esso
@@ -528,12 +527,14 @@
          (monomials-variables (poly-monomials (as-polynomial poly)) ()))
         ))
 
+
 ; data una struttura Monomial, ritorna la lista di varpowers Vp-list
 (defun varpowers (monomial)
   (if (is-monomial monomial)
       (monomial-vars-and-powers (semplify-monomial monomial))
     (error "l'input di varpowers deve essere una struttura Monomial")
     ))
+
 
 ; data una struttura Monomial, ritorna la lista di variabili Variables
 (defun var-of (monomial)
@@ -543,6 +544,7 @@
     (error "l'input di var-of deve essere una struttura Monomial"))
   )
 
+
 ; data una struttura Monomial, ritorna il suo grado totale TotalDegree
 (defun monomial-degree (monomial)
 
@@ -550,6 +552,7 @@
       (monomial-total-degree monomial)
     (error "l'input di monomial-degree deve essere una struttura Monomial")
     ))
+
 
 ; ritorna la lista ordinata dei monomi che appaiono in poly 
 (defun monomials (poly)
