@@ -3,7 +3,7 @@
 ;; polinomi.LISP
 
 
-; Monomio : (m coefficent total-degree vars-n-powers)
+; Monomio : (m coefficient total-degree vars-n-powers)
 ; Variabile: (v power var-symbol)
 ; Polinomio: (poly monomials)
 
@@ -22,7 +22,7 @@
 
 
 ; estrae il coefficente da un monomio
-(defun monomial-coefficent (m)
+(defun monomial-coefficient (m)
   (second m))
 
 
@@ -153,17 +153,30 @@
   )
 
 
-; si occupa della semplifica del monomio
+; data una struttura Monomial torna la struttura Monomial seplificata
 (defun semplify-monomial (m)
   (cond ((is-monomial m)
          (list 'm 
-               (monomial-coefficent m) 
+               (monomial-coefficient m) 
                (monomial-total-degree m)
                (semplify-vars-and-powers (monomial-vars-and-powers m))))
-
+        
+        ((eq m nil)
+         m
+         )
+        
         (T
          (error "input non valido per la semplifica del monomio")))
   )
+
+; data una lista di strutture Monomial torna la lista di strutture Monomial semplificate
+(defun semplify-monomials (ms app)
+  (let ((m (first ms)))
+    (if (eq m nil)
+        app
+      (semplify-monomials (cdr ms) (append app (list (semplify-monomial m))))
+      )
+    ))
 
 
 ; ritrona la lista di variabili contenute in vars semplificate
@@ -277,9 +290,48 @@
         ))
 
 
-; si occupa della semplifica del polinomio
+; data una struttura Poly torna la struttura Poly semplificata
 (defun semplify-polynomial (poly)
-  poly
+
+  (if (is-polynomial poly)
+
+      (let ((ms (sort-monomials (zero-eater-m (semplify-monomials (poly-monomials poly) ()) ()))))
+        (semplify-polynomial-r (first ms) (cdr ms) ())
+        )
+    
+    (error "input non valido per la semplifica del polinomio")
+    ))
+
+; data una lista di strutture Monomial torna la lista di strutture Monomial semplificata
+(defun semplify-polynomial-r (m1 ms app)
+
+  (let ((m2 (first ms))
+        (vps1 (monomial-vars-and-powers m1))
+        (vps2 (monomial-vars-and-powers m2))
+        (c1 (monomial-coefficient m1))
+        (c2 (monomial-coefficient m2))
+        (td (monomial-total-degree m1)))
+    
+    (cond ((eq m1 nil)
+           app)
+          
+          ((eq m2 nil)
+           (append app (list m1)))
+          
+          ((and (equal vps1 vps2)
+                (not (eq m1 nil))
+                (not (eq m2 nil)))
+           (semplify-polynomial-r (list 'm (+ c1 c2) td vps1) (cdr ms) app)
+           )
+
+          ((and (not (equal vps1 vps2))
+                (not (eq m1 nil))
+                (not (eq m2 nil)))
+           (semplify-polynomial-r m2 (cdr ms) (append app (list m1))))
+          
+          (T
+           (error "durante la semplifica dei monomi"))
+          ))
   )
 
 
@@ -291,10 +343,10 @@
     (cond ((eq m nil)
           app)
     
-          ((= (monomial-coefficent m) 0)
+          ((= (monomial-coefficient m) 0)
            (zero-eater-m (cdr ms) app))
 
-          ((not (= (monomial-coefficent m) 0))
+          ((not (= (monomial-coefficient m) 0))
            (zero-eater-m (cdr ms) (append app (list m))))
           
           (T
