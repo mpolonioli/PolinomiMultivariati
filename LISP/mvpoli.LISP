@@ -474,7 +474,7 @@
 ; data una struttura Monomial, ritorna la lista di varpowers Vp-list
 (defun varpowers (monomial)
   (if (is-monomial monomial)
-      (monomial-vars-and-powers monomial)
+      (monomial-vars-and-powers (semplify-monomial monomial))
     (error "l'input di varpowers deve essere una struttura Monomial")
     ))
 
