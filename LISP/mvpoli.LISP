@@ -475,8 +475,14 @@
 (defun varpowers (monomial)
   (if (is-monomial monomial)
       (monomial-vars-and-powers monomial)
-    (error "input non valido per l'estrazione di Vp-list")
+    (error "l'input di varpowers deve essere una struttura Monomial")
     ))
+
+; data una struttura Monomial, ritorna la lista di variabili Variables
+(defun vars-of (Monomial)
+  (if (is-monomial monomial)
+      (monomial-variables monomial ())
+    (error "l'input di vars-of deve essere una struttura Monomial")
   
 
 ;; end-of-file -- polinomi.LISP
