@@ -307,9 +307,9 @@
 
   (let ((m2 (first ms))
         (vps1 (monomial-vars-and-powers m1))
-        (vps2 (monomial-vars-and-powers m2))
+        (vps2 (monomial-vars-and-powers (first ms)))
         (c1 (monomial-coefficient m1))
-        (c2 (monomial-coefficient m2))
+        (c2 (monomial-coefficient (first ms)))
         (td (monomial-total-degree m1)))
     
     (cond ((eq m1 nil)
