@@ -598,10 +598,10 @@
 ; ritorna il massimo grado dei monomi che compaiono in poly
 (defun maxdegree (poly)
   (cond ((is-monomial poly)
-         (monomial-degree poly))
+         (monomial-degree (semplify-monomial poly)))
 
         ((is-polynomial poly)
-         (monomial-degree (first (reverse (monomials poly)))))
+         (monomial-degree (first (reverse (monomials (semplify-polynomial poly))))))
 
         (T
          (monomial-degree (first (reverse (monomials (as-polynomial poly))))))
@@ -611,14 +611,16 @@
 ; ritorna il minimo grado dei monomi che compaiono in poly
 (defun mindegree (poly)
   (cond ((is-monomial poly)
-         (monomial-degree poly))
+         (monomial-degree (semplify-monomial poly)))
 
         ((is-polynomial poly)
-         (monomial-degree (first (monomials poly))))
+         (monomial-degree (first (monomials (semplify-polynomial poly)))))
         
         (T
          (monomial-degree (first (monomials (as-polynomial poly)))))
         ))
+
+
         
 
 ;; end-of-file -- polinomi.LISP
