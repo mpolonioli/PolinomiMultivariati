@@ -537,11 +537,11 @@
 
 
 ; data una struttura Monomial, ritorna la lista di variabili Variables
-(defun var-of (monomial)
+(defun vars-of (monomial)
 
   (if (is-monomial monomial)
       (monomial-variables monomial ())
-    (error "l'input di var-of deve essere una struttura Monomial"))
+    (error "l'input di vars-of deve essere una struttura Monomial"))
   )
 
 
