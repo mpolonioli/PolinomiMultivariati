@@ -567,4 +567,32 @@
          (poly-monomials (as-polynomial poly)))
         ))
 
+
+; ritorna una lista dei coefficienti da una lista di monomi
+(defun monomials-coefficients (monomial-list app)
+  (let ((monomial (first monomial-list)))
+    (cond ((eq monomial nil)
+          app)
+          
+          (T
+           (monomials-coefficients (cdr monomial-list) (append 
+                                                        app 
+                                                        (list (monomial-coefficient monomial)))))
+          ))
+  )
+
+
+; ritorna una lista Cofficients dei coffcienti di Poly
+(defun coefficients (poly)
+  (cond ((is-monomial poly)
+         (list (monomial-coefficent (semplify-monomial poly))))
+        
+        ((is-polynomial poly)
+         (monomials-coefficients (monomials (semplify-polynomial poly)) ()))
+        
+        (T
+         (monomials-coefficients (monomials (as-polynomial poly)) ()))
+        ))
+
+
 ;; end-of-file -- polinomi.LISP
