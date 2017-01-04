@@ -621,6 +621,32 @@
         ))
 
 
+; produce il polinomio somma di poly1 e poly2
+(defun polyplus (poly1 poly2)
+  (cond ((and (is-monomial poly1)
+              (is-monomial poly2))
+         (semplify-polynomial (list 'poly (list poly1 poly2))))
+
+        ((and (is-monomial poly1)
+              (is-polynomial poly2))
+         (semplify-polynomial (list 'poly (append (list poly1) (monomials poly2)))))
+       
+        ((and (is-polynomial poly1)
+              (is-monomial poly2))
+         (semplify-polynomial (list 'poly (append (monomials poly1) (list poly2)))))
+        
+        ((and (is-polynomial poly1)
+              (is-polynomial poly2))
+         (semplify-polynomial (list 'poly (append (monomials poly1) (monomials poly2)))))
+        
+        (T
+         (semplify-polynomial (list 'poly (append 
+                                           (monomials (as-polynomial poly1)) 
+                                           (monomials (as-polynomial poly2))))))
+        ))
+      
+
+
         
 
 ;; end-of-file -- polinomi.LISP
