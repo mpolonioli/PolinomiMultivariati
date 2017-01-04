@@ -644,9 +644,53 @@
                                            (monomials (as-polynomial poly1)) 
                                            (monomials (as-polynomial poly2))))))
         ))
-      
 
 
+; data una lista di monomi ritorna una lista di monomi con segno dei coefficienti invertito
+(defun invert-sign (monomials app)
+  (let ((m (first monomials)))
+    (cond ((eq m nil)
+           app)
+
+          (T
+           (invert-sign (cdr monomials) (append (list (list 'M 
+                                                            (* -1 (monomial-coefficient m))
+                                                            (monomial-total-degree m)
+                                                            (monomial-vars-and-powers m))) 
+                                                app)))
+          ))
+  )
+
+
+; produce il polinomio differenza di poly1 e poly2
+(defun polyminus (poly1 poly2)
+  (cond ((and (is-monomial poly1)
+              (is-monomial poly2))
+         (semplify-polynomial (list 'poly 
+                                    (append (list poly1)  (invert-sign (list poly2) ())))))
+        
+        ((and (is-monomial poly1)
+              (is-polynomial poly2))
+         (semplify-polynomial (list 'poly 
+                                    (append (list poly1) (invert-sign (monomials poly2) ())))))
+        
+        ((and (is-polynomial poly1)
+              (is-monomial poly2))
+         (semplify-polynomial (list 'poly 
+                                    (append (monomials poly1) (invert-sign (list poly2) ())))))
+        
+        ((and (is-polynomial poly1)
+              (is-polynomial poly2))
+         (semplify-polynomial (list 'poly 
+                                    (append (monomials poly1) 
+                                            (invert-sign (monomials poly2) ())))))
+        
+        (T
+         (semplify-polynomial (list 'poly 
+                                    (append 
+                                     (monomials (as-polynomial poly1)) 
+                                     (invert-sign (monomials (as-polynomial poly2)) ())))))
+        ))
         
 
 ;; end-of-file -- polinomi.LISP
