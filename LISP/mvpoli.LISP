@@ -753,10 +753,7 @@
         (vps1 (monomial-vars-and-powers (first ms1)))
         (vps2 (monomial-vars-and-powers (first ms2))))
     
-    (cond ((eq ms2-copy nil)
-           ())
-          
-          ((eq ms1 ())
+    (cond ((eq ms1 ())
            app)
           
           ((eq ms2 ())
