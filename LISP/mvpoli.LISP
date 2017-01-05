@@ -691,6 +691,85 @@
                                      (monomials (as-polynomial poly1)) 
                                      (invert-sign (monomials (as-polynomial poly2)) ())))))
         ))
+
+
+; ritorna il polinomio risultante dalla moltiplicazione di poly1 e poly2
+(defun polytimes (poly1 poly2)
+  (cond ((and (is-monomial poly1)
+              (is-monomial poly2))
+         (semplify-polynomial (list 
+                               'POLY 
+                               (polytimes-calc (list poly1) (list poly2) (list poly2) ()))))
         
+        ((and (is-monomial poly1)
+              (is-polynomial poly2))
+         (semplify-polynomial (list
+                               'POLY
+                               (polytimes-calc 
+                                (list poly1) 
+                                (poly-monomials poly2)
+                                (poly-monomials poly2)
+                                ()))))
+        
+        ((and (is-polynomial poly1)
+              (is-monomial poly2))
+         (semplify-polynomial (list
+                               'POLY
+                               (polytimes-calc
+                                (poly-monomials poly1)
+                                (list poly2)
+                                (list poly2)
+                                ()))))
+
+        ((and (is-polynomial poly1)
+              (is-polynomial poly2))
+         (semplify-polynomial (list
+                               'POLY
+                               (polytimes-calc
+                                (poly-monomials poly1)
+                                (poly-monomials poly2)
+                                (poly-monomials poly2)
+                                ()))))
+        
+        (T
+         (let ((p1 (as-polynomial poly1)
+                   p2 (as-polynomial poly2))
+               (semplify-polynomial (list
+                                     'POLY
+                                     (polytimes-calc
+                                      (poly-monomials p1)
+                                      (poly-monomials p2)
+                                      (poly-monomials p2)
+                                      ()))))))
+        ))
+
+
+; esegue il calcolo della moltiplicazione tra 2 liste di monomi
+(defun polytimes-calc (ms1 ms2 ms2-copy app)
+  (let ((c1 (monomial-coefficient (first ms1)))
+        (c2 (monomial-coefficient (first ms2)))
+        (td1 (monomial-total-degree (first ms1)))
+        (td2 (monomial-total-degree (first ms2)))
+        (vps1 (monomial-vars-and-powers (first ms1)))
+        (vps2 (monomial-vars-and-powers (first ms2))))
+    
+    (cond ((eq ms1 ())
+          app)
+          
+          ((eq ms2 ())
+           (polytimes-calc ms1 ms2-copy ms2-copy app))
+
+          (T
+           (polytimes-calc
+            (cdr ms1)
+            (cdr ms2)
+            ms2-copy
+            (append app (list (semplify-monomial (list
+                                                  'M
+                                                  (* c1 c2)
+                                                  (+ td1 td2)
+                                                  (append vps1 vps2)))))))
+     ))
+  )
 
 ;; end-of-file -- polinomi.LISP
