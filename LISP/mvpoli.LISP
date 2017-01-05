@@ -760,11 +760,11 @@
            app)
           
           ((eq ms2 ())
-           (polytimes-calc ms1 ms2-copy ms2-copy app))
+           (polytimes-calc (cdr ms1) ms2-copy ms2-copy app))
           
           (T
            (polytimes-calc
-            (cdr ms1)
+            ms1
             (cdr ms2)
             ms2-copy
             (append app (list (semplify-monomial (list
