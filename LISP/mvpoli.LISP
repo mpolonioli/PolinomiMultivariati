@@ -796,6 +796,7 @@
         
         (T
          (+ (* (monomial-coefficient (first ms)) (calc-vps-value 
+                                                  (monomial-vars-and-powers (first ms)) 
                                                   pairs-kv)) 
             (polyval-calc (cdr ms) pairs-kv)))
         ))
@@ -819,6 +820,7 @@
         (second (first pairs-kv)))
         
         (T
+         (get-varpower-value k (cdr pairs-kv)))
         ))
 
 
