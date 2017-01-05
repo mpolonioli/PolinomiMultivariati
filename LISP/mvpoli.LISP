@@ -498,12 +498,12 @@
   (let ((m (first ms)))
     
     (cond ((eq m nil)
-          ((sort (remove-duplicates app) #'string<=)))
+          (sort (remove-duplicates app) #'string<=))
           
           ((is-monomial m)
            (monomials-variables (cdr ms) 
                                 (append app (vars-and-powers-variables 
-                                             (monomial-vars-and-powers m))))
+                                             (monomial-vars-and-powers m) ())))
            )
 
           (T
@@ -771,5 +771,75 @@
                                                   (append vps1 vps2)))))))
           ))
   )
+
+
+; data una lista di simboli di variabile e una lista di valori produce la lista delle coppie 
+; simbolo-valore
+(defun create-pairs-kv (variables values)
+  (cond ((eq variables nil)
+        nil)
+        
+        ((and (not (eq variables nil))
+              (eq values nil))
+         (error "valori mancanti per il binding chiave-valore"))
+
+        (T
+         (cons (list (first variables) (first values)) 
+               (create-pairs-kv (cdr variables) (cdr values))))
+        ))
+
+
+; esegue il calcolo del punto n-dimensionale di una lista di monomi
+(defun polyval-calc (ms pairs-kv)
+  (cond ((eq ms nil)
+        0)
+        
+        (T
+         (+ (* (monomial-coefficient (first ms)) (calc-vps-value 
+                                                  pairs-kv)) 
+            (polyval-calc (cdr ms) pairs-kv)))
+        ))
+
+
+; esegue il calcolo del punto n-dimensionale di una lista di varpower
+(defun calc-vps-value (vps pairs-kv)
+  (cond ((eq vps nil)
+        1)
+
+        (T
+         (* (expt (get-varpower-value (varpower-symbol (first vps)) pairs-kv) 
+                  (varpower-power (first vps)))
+            (calc-vps-value (cdr vps) pairs-kv)))
+        ))
+
+
+; data un simbolo e una lista simbolo-valore torna il valore associato al simbolo
+(defun get-varpower-value (k pairs-kv)
+  (cond ((eq k (first (first pairs-kv)))
+        (second (first pairs-kv)))
+        
+        (T
+        ))
+
+
+; restituisce il valore Value del polinomio Polynomial, nel punto n-dimensionale rappresentato dalla
+; lista VariableValues, che contiene un valore per ogni variabile ottenuta con la funzione variables
+(defun polyval (poly variable-values)
+  (cond ((is-monomial poly)
+        (polyval-calc 
+         (list poly) 
+         (create-pairs-kv (variables poly) variable-values)))
+        
+        ((is-polynomial poly)
+         (polyval-calc 
+          (poly-monomials poly)
+          (create-pairs-kv (variables poly) variable-values)))
+        
+        (T
+         (let ((p (as-polynomial poly)))
+           (polyval-calc
+            (poly-monomials p)
+            (create-pairs-kv (variables p) variable-values))))
+        ))
 
 ;; end-of-file -- polinomi.LISP
