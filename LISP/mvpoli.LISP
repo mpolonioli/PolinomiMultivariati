@@ -753,12 +753,15 @@
         (vps1 (monomial-vars-and-powers (first ms1)))
         (vps2 (monomial-vars-and-powers (first ms2))))
     
-    (cond ((eq ms1 ())
-          app)
+    (cond ((eq ms2-copy nil)
+           ())
+          
+          ((eq ms1 ())
+           app)
           
           ((eq ms2 ())
            (polytimes-calc ms1 ms2-copy ms2-copy app))
-
+          
           (T
            (polytimes-calc
             (cdr ms1)
@@ -769,7 +772,7 @@
                                                   (* c1 c2)
                                                   (+ td1 td2)
                                                   (append vps1 vps2)))))))
-     ))
+          ))
   )
 
 ;; end-of-file -- polinomi.LISP
