@@ -844,4 +844,58 @@
             (create-pairs-kv (variables p) variable-values))))
         ))
 
+
+; ritorna NIL dopo aver stampato sullo standard output una rappresentazione 
+; tradizionale del termine polinomio associato a poly
+
+(defun pprint-polynomial (poly)
+  (cond ((is-monomial poly)
+         (pprint-monomials (list poly)))
+        
+        ((is-polynomial poly)
+         (pprint-monomials (poly-monomials poly))
+         )
+        
+        (T
+         (error "input non valido per la stampa del polinomio"))
+        )
+  )
+
+
+; ritorna NIL dopo aver stampato sullo standard output una rappresentazione
+; tradizionale del termine polinomio associato alla lista di monomi monomials
+(defun pprint-monomials (monomials)
+  (let ((m (first monomials))
+        (c (monomial-coefficient (first monomials)))
+        (vps (monomial-vars-and-powers (first monomials))))
+    (cond ((eq monomials nil)
+           (format t "~%"))
+          
+          (T
+           (if (> c 0)
+               (format t "+"))
+           (format t "~S" c)
+           (pprint-vars-and-powers vps)
+           (pprint-monomials (cdr monomials)))
+          ))
+  )
+
+
+; ritorna NIL dopo aver stampato sullo standard output una rappresentazione
+; tradizionale dei termini varpower contenuti in vps
+(defun pprint-vars-and-powers (vps)
+  (let ((s (varpower-symbol (first vps)))
+        (p (varpower-power (first vps))))
+    (cond ((eq vps nil)
+           (format t " "))
+          
+          (T
+           (format t "*~S" s)
+           (if (> p 1)
+               (format t "^~D" p))
+           (pprint-vars-and-powers (cdr vps)))
+          ))
+  )
+
+
 ;; end-of-file -- polinomi.LISP
