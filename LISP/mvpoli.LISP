@@ -268,7 +268,7 @@
 
 ; riordina le variabili secondo le specifiche
 (defun sort-vars-and-powers (vps)
-  (sort vps #'vp<=)
+  (sort (copy-seq vps) #'vp<=)
   )
 
 
@@ -468,7 +468,7 @@
 
 ; riordina una lista di monomi secondo le specifiche
 (defun sort-monomials (monomials)
-  (sort monomials #'ms<=)
+  (sort (copy-seq monomials) #'ms<=)
   )
 
 
@@ -483,7 +483,7 @@
                                       (append app (list (varpower-symbol vp)))))
           
           ((eq vp nil)
-           (sort (remove-duplicates app) #'string<=))
+           (sort (copy-seq (remove-duplicates (copy-seq app))) #'string<=))
           
           (T
            (error "Input non valido per l'estrazione dei simboli di variabile da vps"))
@@ -498,7 +498,7 @@
   (let ((m (first ms)))
     
     (cond ((eq m nil)
-          (sort (remove-duplicates app) #'string<=))
+          (sort (copy-seq (remove-duplicates (copy-seq app))) #'string<=))
           
           ((is-monomial m)
            (monomials-variables (cdr ms) 
