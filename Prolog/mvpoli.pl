@@ -658,7 +658,7 @@ variables(poly([]), App, R) :-
 	sort(App, R).
 
 % monomio senza variabili
-variables(poly([m(_, _, [])] | Ms), App, R) :-
+variables(poly([m(_, _, []) | Ms]), App, R) :-
 	!,
 	variables(poly(Ms), App, R).
 
@@ -683,6 +683,29 @@ extract_variables([v(_, S) | VPs], App, R) :-
 	!,
 	append(App, [S], NApp),
 	extract_variables(VPs, NApp, R).
+
+
+%%	monomials(Poly, Monomials)
+%
+%	vero quando Monomials è la lista ordinata dei monomi che
+%	compaiono in Poly
+
+% input in forma poly
+monomials(poly(Monomials), R) :-
+	is_polynomial(poly(Monomials)),
+	!,
+	semplify_polynomial(Monomials, R).
+
+% input in forma m
+monomials(m(C, TD, VP), m(C, TD, SVP)) :-
+	is_monomial(m(C, TD, VP)),
+	!,
+	semplify_varpower(VP, SVP).
+
+% input in forma "scomoda"
+monomials(Input, Monomials) :-
+	as_polynomial(Input, poly(Monomials)),
+	!.
 
 
 %%	maxdegree(Poly, Degree)
