@@ -392,7 +392,7 @@
   )
 
 
-; vps1 e vps2 devono avere grado totale identico e simboli di variabili diversi
+; vps1 e vps2 devono avere grado totale identico
 ; 1   se vps1 = vps2
 ; 0   se vps1 < vps2
 ; nil se vps1 > vps2
@@ -411,15 +411,18 @@
 
           ((and (eq vp1 nil)
                 (eq vp2 nil))
-           (playoff-vars-and-powers<= vps1 vps2))
+           1)
           
-          ((eq (string<= (varpower-symbol vp1) (varpower-symbol vp2)) 0)
+          ((and (eq (string<= (varpower-symbol vp1) (varpower-symbol vp2)) 0)
+                (< (varpower-power vp1) (varpower-power vp2)))
            0)
           
-          ((eq (string<= (varpower-symbol vp1) (varpower-symbol vp2)) nil)
+          ((and (eq (string<= (varpower-symbol vp1) (varpower-symbol vp2)) nil)
+                (> (varpower-power vp1) (varpower-power vp2)))
            nil)
           
-          ((eq (string<= (varpower-symbol vp1) (varpower-symbol vp2)) 1)
+          ((and (eq (string<= (varpower-symbol vp1) (varpower-symbol vp2)) 1)
+                (= (varpower-power vp1) (varpower-power vp2)))
            (vars-and-powers<= (cdr vps1) (cdr vps2)))
           
           (T 
