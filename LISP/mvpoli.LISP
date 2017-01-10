@@ -1,3 +1,8 @@
+;;;; <780783> <Polonioli> <Michele>
+;;;; <780755> <Nani> <Edoardo>
+;;;; <763529> <Cantù> <Stefano>
+
+
 ;;;; -*- Mode: LISP -*-
 
 ;; polinomi.LISP
