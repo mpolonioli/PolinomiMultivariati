@@ -355,43 +355,6 @@
           ))
   )
 
-
-; vps1 e vps2 devono avere simboli di variabile identici e grado totale identico
-; 1   se vps1 = vps2
-; 0   se vps1 < vps2
-; nil se vps1 > vps2
-(defun playoff-vars-and-powers<= (vps1 vps2)
-
-  (let ((vp1 (first vps1))
-        (vp2 (first vps2)))
-    
-    (cond ((and (eq vp1 nil)
-                (eq vp2 nil))
-           1)
-          
-          ((and (eq vp1 nil)
-                (not (eq vp2 nil)))
-           0)
-          
-          ((and (not (eq vp1 nil))
-                (eq vp2 nil))
-           nil)
-          
-          ((< (varpower-power vp1) (varpower-power vp2))
-           0)
-          
-          ((> (varpower-power vp1) (varpower-power vp2))
-           nil)
-          
-          ((= (varpower-power vp1) (varpower-power vp2))
-           (vars-and-powers<= (cdr vps1) (cdr vps2)))
-          
-          (T 
-           (error "durante il confronto tra liste di variabili"))
-          ))
-  )
-
-
 ; vps1 e vps2 devono avere grado totale identico
 ; 1   se vps1 = vps2
 ; 0   se vps1 < vps2
