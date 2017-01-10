@@ -146,6 +146,7 @@ sort_playoff_ms([M | Ms], R) :-
 %
 %	App2 è la lista ordinata dei monomi incortrati
 
+
 % caso base: ho terminato i monomi da confrontare
 sort_playoff_ms(M, [], [], App2, R) :-
 	!,
@@ -157,28 +158,23 @@ sort_playoff_ms(M, [], [FirstApp1 | RestApp1], App2, R) :-
 	append(App2, [M], NApp2),
 	sort_playoff_ms(FirstApp1, RestApp1, [], NApp2, R).
 
-% ho trovato un monomio da spareggiare maggiore o uguale di quello che
-% sto considerando
+% il monomio che sto considerando � minore o uguale di quello da
+% spareggiare
 sort_playoff_ms(m(C1, TD1, VP1), [m(C2, TD1, VP2) | Ms], App1, App2, R) :-
-	extract_variables(VP1, [], Variables),
-	extract_variables(VP2, [], Variables),
 	varpower_min_or_equal(VP1, VP2, 1),
 	!,
 	append(App1, [m(C2, TD1, VP2)], NApp1),
 	sort_playoff_ms(m(C1, TD1, VP1), Ms, NApp1, App2, R).
 
-% ho trovato un monomio da spareggiare minore di quello che sto
-% considerando
+% il monomio che sto considerando � maggiore di quello da spareggiare
 sort_playoff_ms(m(C1, TD1, VP1), [m(C2, TD1, VP2) | Ms], App1, App2, R) :-
-	extract_variables(VP1, [], Variables),
-	extract_variables(VP2, [], Variables),
 	varpower_min_or_equal(VP1, VP2, 0),
 	!,
 	append(App1, [m(C1, TD1, VP1)], NApp1),
 	sort_playoff_ms(m(C2, TD1, VP2), Ms, NApp1, App2, R).
 
-% ho trovato un monomio con grado maggiore di quello che sto
-% considerando che è l'ultimo o l'unico del gruppo con cui devo
+% il monomio che sto considerando ha grado minore (diverso) di quello da
+% confrontare ed e' l'ultimo o l'unico del gruppo con cui devo
 % spareggiarlo
 sort_playoff_ms(m(C1, TD1, VP1), [m(C2, TD2, VP2) | Ms], [], App2, R) :-
 	TD1 \= TD2,
@@ -186,8 +182,8 @@ sort_playoff_ms(m(C1, TD1, VP1), [m(C2, TD2, VP2) | Ms], [], App2, R) :-
 	append(App2, [m(C1, TD1, VP1)], NApp2),
 	sort_playoff_ms(m(C2, TD2, VP2), Ms, [], NApp2, R).
 
-% ho trovato un monomio con grado maggiore di quello che sto
-% considerando ma non ho finito di spareggiare il suo gruppo
+% il monomio che sto considerando ha grado minore (diverso) di quello da
+% confrontare ma non ho finito di spareggiare il suo gruppo
 sort_playoff_ms(m(C1, TD1, VP1),
 		[m(C2, TD2, VP2) | Ms],
 		[m(C3, TD3, VP3) | RestApp1],
@@ -200,41 +196,13 @@ sort_playoff_ms(m(C1, TD1, VP1),
 	append(RestApp1, [m(C2, TD2, VP2) | Ms], NMs),
 	sort_playoff_ms(m(C3, TD3, VP3), NMs, [], NApp2, R).
 
-% ho trovato un monomio con grado uguale di quello che sto
-% considerando ma simboli di varibile diversi ed è l'ultimo o l'unico
-% del gruppo con cui devo spareggiarlo
-sort_playoff_ms(m(C1, TD1, VP1), [m(C2, TD1, VP2) | Ms], [], App2, R) :-
-	extract_variables(VP1, [], Variables1),
-	extract_variables(VP2, [], Variables2),
-	Variables1 \= Variables2,
-	!,
-	append(App2, [m(C1, TD1, VP1)], NApp2),
-	sort_playoff_ms(m(C2, TD1, VP2), Ms, [], NApp2, R).
-
-% ho trovato un monomio con grado uguale di quello che sto
-% considerando ma simboli di varibile diversi ma non ho finito di
-% spareggiare il suo gruppo
-sort_playoff_ms(m(C1, TD1, VP1),
-		[m(C2, TD1, VP2) | Ms],
-		[m(C3, TD3, VP3) | RestApp1],
-		App2,
-		R) :-
-
-	extract_variables(VP1, [], Variables1),
-	extract_variables(VP2, [], Variables2),
-	Variables1 \= Variables2,
-	!,
-	append(App2, [m(C1, TD1, VP1)], NApp2),
-	append(RestApp1, [m(C2, TD1, VP2) | Ms], NMs),
-	sort_playoff_ms(m(C3, TD3, VP3), NMs, [], NApp2, R).
-
 
 %%	varpower_min_or_equal(VP1, VP2, Result)
 %
 %	predicato ausiliario di sort_playoff_ms/5
 %
-%	VP1 e VP2 devono essere liste di variabili con simboli uguali e
-%	somma dei gradi uguali
+%	VP1 e VP2 devono essere liste di variabili con somma dei gradi
+%	uguali e ordinate lessicograficamente per i simboli di variabile
 %
 %	vero quando (Result = 1 e VP1 <= VP2) oppure
 %		    (Result = 0 e VP1 > VP2)
@@ -252,6 +220,11 @@ varpower_min_or_equal([v(P1, S) | _],[v(P2, S) | _], 0) :-
 	P1 > P2,
 	!.
 
+% ho trovato 2 variabili con simbolo diverso
+varpower_min_or_equal([v(_, S1) | _], [v(_, S2) | _], 1) :-
+	S1 \= S2,
+	!.
+
 % ho trovato 2 variabili identiche
 varpower_min_or_equal([v(P, S) | VPs1], [v(P, S) | VPs2], R) :-
 	!,
@@ -260,7 +233,7 @@ varpower_min_or_equal([v(P, S) | VPs1], [v(P, S) | VPs2], R) :-
 
 %%	semplify_polynomial(Poly1, Poly2)
 %
-%	vero se Poly2 è Poly1 semplificato
+%	vero se Poly2 e' Poly1 semplificato
 
 % la semplifica della lista vuota è la lista vuota
 semplify_polynomial([], []) :- !.
@@ -799,6 +772,31 @@ polyplus(m(C, TD, VP), poly(Ms), Result) :-
 	!,
 	polyplus(poly([m(C, TD, VP)]), poly(Ms), Result).
 
+
+% input in forma "scomoda", m
+polyplus(Input1, m(C, TD, VP), Result) :-
+	as_polynomial(Input1, Poly1),
+	!,
+	polyplus(Poly1, poly([m(C, TD, VP)]), Result).
+
+% input in forma m, "scomoda"
+polyplus(m(C, TD, VP), Input2,  Result) :-
+	as_polynomial(Input2, Poly2),
+	!,
+	polyplus(poly([m(C, TD, VP)]), Poly2, Result).
+
+% input in forma "scomoda", poly
+polyplus(Input1, poly(Monomials), Result) :-
+	as_polynomial(Input1, Poly1),
+	!,
+	polyplus(Poly1, poly(Monomials), Result).
+
+% input in forma poly, "scomoda"
+polyplus(poly(Monomials), Input2, Result) :-
+	as_polynomial(Input2, Poly2),
+	!,
+	polyplus(poly(Monomials), Poly2, Result).
+
 % input in forma poly, poly
 polyplus(poly(Ms1), poly(Ms2), poly(SSMs3)) :-
 	is_polynomial(poly(Ms1)),
@@ -807,7 +805,7 @@ polyplus(poly(Ms1), poly(Ms2), poly(SSMs3)) :-
 	append(Ms1, Ms2, Ms3),
 	semplify_polynomial(Ms3, SSMs3).
 
-% input in forma "scomoda"
+% input in forma "scomoda", "scomoda"
 polyplus(Input1, Input2, poly(SSMs3)) :-
 	% not_is_poynomial(Input1),
 	% not_is_polynomial(input2),
@@ -837,6 +835,30 @@ polyminus(m(C, TD, VP), poly(Ms), Result) :-
 	!,
 	polyminus(poly([m(C, TD, VP)]), poly(Ms), Result).
 
+% input in forma "scomoda", m
+polyminus(Input1, m(C, TD, VP), Result) :-
+	as_polynomial(Input1, Poly1),
+	!,
+	polyminus(Poly1, poly([m(C, TD, VP)]), Result).
+
+% input in forma m, "scomoda"
+polyminus(m(C, TD, VP), Input2,  Result) :-
+	as_polynomial(Input2, Poly2),
+	!,
+	polyminus(poly([m(C, TD, VP)]), Poly2, Result).
+
+% input in forma "scomoda", poly
+polyminus(Input1, poly(Monomials), Result) :-
+	as_polynomial(Input1, Poly1),
+	!,
+	polyminus(Poly1, poly(Monomials), Result).
+
+% input in forma poly, "scomoda"
+polyminus(poly(Monomials), Input2, Result) :-
+	as_polynomial(Input2, Poly2),
+	!,
+	polyminus(poly(Monomials), Poly2, Result).
+
 % input in forma poly, poly
 polyminus(poly(Ms1), poly(Ms2), poly(SSMs3)) :-
 	is_polynomial(poly(Ms1)),
@@ -846,7 +868,7 @@ polyminus(poly(Ms1), poly(Ms2), poly(SSMs3)) :-
 	append(Ms1, IMs2, Ms3),
 	semplify_polynomial(Ms3, SSMs3).
 
-% input in forma "scomoda"
+% input in forma "scomoda", "scomoda"
 polyminus(Input1, Input2, poly(SSMs3)) :-
 	% not_is_poynomial(Input1),
 	% not_is_polynomial(input2),
@@ -895,6 +917,29 @@ polytimes(m(C, TD, VP), poly(Ms), Result) :-
 	!,
 	polytimes(poly([m(C, TD, VP)]), poly(Ms), Result).
 
+% input in forma "scomoda", m
+polytimes(Input1, m(C, TD, VP), Result) :-
+	as_polynomial(Input1, Poly1),
+	!,
+	polytimes(Poly1, poly([m(C, TD, VP)]), Result).
+
+% input in forma m, "scomoda"
+polytimes(m(C, TD, VP), Input2,  Result) :-
+	as_polynomial(Input2, Poly2),
+	!,
+	polytimes(poly([m(C, TD, VP)]), Poly2, Result).
+
+% input in forma "scomoda", poly
+polytimes(Input1, poly(Monomials), Result) :-
+	as_polynomial(Input1, Poly1),
+	!,
+	polytimes(Poly1, poly(Monomials), Result).
+
+% input in forma poly, "scomoda"
+polytimes(poly(Monomials), Input2, Result) :-
+	as_polynomial(Input2, Poly2),
+	!,
+	polytimes(poly(Monomials), Poly2, Result).
 
 % Input in forma poly, poly con almeno un monomio per entrambi i
 % polinomi
@@ -910,7 +955,8 @@ polytimes(poly([m(C1, TD1, VP1) | Ms1]),
 		  [],
 		  Ms3).
 
-% input in forma "scomoda" con almeno un monomio per entrambi i polinomi
+% input in forma "scomoda", "scomoda" con almeno un monomio per entrambi
+% i polinomi
 polytimes(Input1, Input2, poly(Ms3)) :-
 	as_polynomial(Input1, poly([m(C1, TD1, VP1) | Ms1])),
 	as_polynomial(Input2, poly([m(C2, TD2, VP2) | Ms2])),
@@ -921,7 +967,8 @@ polytimes(Input1, Input2, poly(Ms3)) :-
 		  [],
 		  Ms3).
 
-% input in forma "scomoda" con almeno un polinomio privo di monomi
+% input in forma "scomoda", "scomoda" con almeno un polinomio privo di
+% monomi
 polytimes(Input1, Input2, poly([])) :-
 	as_polynomial(Input1, poly([])),
 	!,
