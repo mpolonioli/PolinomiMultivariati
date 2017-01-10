@@ -605,6 +605,34 @@
               (is-polynomial poly2))
          (semplify-polynomial (list 'poly (append (monomials poly1) (monomials poly2)))))
         
+        ((and (is-monomial poly1)
+              (not (is-polynomial poly2))
+              (not (is-monomial poly2)))
+         (semplify-polynomial (list 'poly (append 
+                                           (list poly1) 
+                                           (monomials (as-polynomial poly2))))))
+
+        ((and (not (is-monomial poly1))
+              (not (is-polynomial poly1))
+              (is-monomial poly2))
+         (semplify-polynomial (list 'poly (append
+                                           (monomials (as-polynomial poly1))
+                                           (list poly2)))))
+
+        ((and (is-polynomial poly1)
+              (not (is-monomial poly2))
+              (not (is-polynomial poly2)))
+         (semplify-polynomial (list 'poly (append
+                                           (monomials poly1)
+                                           (monomials (as-polynomial poly2))))))
+
+        ((and (not (is-monomial poly1))
+             (not (is-polynomial poly1))
+             (is-polynomial poly2))
+        (semplify-polynomial (list 'poly (append
+                                          (monomials (as-polynomial poly1))
+                                          (monomials poly2)))))
+
         (T
          (semplify-polynomial (list 'poly (append 
                                            (monomials (as-polynomial poly1)) 
@@ -650,6 +678,36 @@
          (semplify-polynomial (list 'poly 
                                     (append (monomials poly1) 
                                             (invert-sign (monomials poly2) ())))))
+
+        ((and (is-monomial poly1)
+              (not (is-polynomial poly2))
+              (not (is-monomial poly2)))
+         (semplify-polynomial (list 'poly 
+                                    (append (list poly1) 
+                                            (invert-sign (monomials (as-polynomial poly2)))))))
+
+        ((and (not (is-monomial poly1))
+              (not (is-polynomial poly1))
+              (is-monomial poly2))
+         (semplify-polynomial (list 'poly 
+                                    (append (monomials (as-polynomial poly1))
+                                            (invert-sign (list poly2))))))
+
+        ((and (is-polynomial poly1)
+              (not (is-monomial poly2))
+              (not (is-polynomial poly2)))
+         (semplify-polynomial (list 'poly 
+                                    (append
+                                     (monomials poly1)
+                                     (invert-sign (monomials (as-polynomial poly2)))))))
+
+        ((and (not (is-monomial poly1))
+             (not (is-polynomial poly1))
+             (is-polynomial poly2))
+        (semplify-polynomial (list 'poly 
+                                   (append
+                                    (monomials (as-polynomial poly1))
+                                    (invert-sign (monomials poly2))))))
         
         (T
          (semplify-polynomial (list 'poly 
@@ -696,17 +754,59 @@
                                 (poly-monomials poly2)
                                 (poly-monomials poly2)
                                 ()))))
+
+        ((and (is-polynomial poly1)
+              (not (is-monomial poly2))
+              (not (is-polynomial poly2)))
+         (semplify-polynomial (list
+                               'POLY
+                               (polytimes-calc
+                                (poly-monomials poly1)
+                                (poly-monomials (as-polynomial poly2))
+                                (poly-monomials (as-polynomial poly2))
+                                ()))))
+
+        ((and (is-monomial poly1)
+              (not (is-monomial poly2))
+              (not (is-polynomial poly2)))
+         (semplify-polynomial (list
+                               'POLY
+                               (polytimes-calc
+                                (list poly1)
+                                (poly-monomials (as-polynomial poly2))
+                                (poly-monomials (as-polynomial poly2))
+                                ()))))
+
+        ((and (not (is-monomial poly1))
+              (not (is-polynomial poly1))
+              (is-polynomial poly2))
+         (semplify-polynomial (list
+                               'POLY
+                               (polytimes-calc
+                                (poly-monomials (as-polynomial poly1))
+                                (poly-monomials poly2)
+                                (poly-monomials poly2)
+                                ()))))
+
+        ((and (not (is-monomial poly1))
+              (not (is-polynomial poly1))
+              (is-monomial poly2))
+         (semplify-polynomial (list
+                               'POLY
+                               (polytimes-calc
+                                (poly-monomials (as-polynomial poly1))
+                                (list poly2)
+                                (list poly2)
+                                ()))))
         
         (T
-         (let ((p1 (as-polynomial poly1)
-                   p2 (as-polynomial poly2))
-               (semplify-polynomial (list
-                                     'POLY
-                                     (polytimes-calc
-                                      (poly-monomials p1)
-                                      (poly-monomials p2)
-                                      (poly-monomials p2)
-                                      ()))))))
+         (semplify-polynomial (list
+                               'POLY
+                               (polytimes-calc
+                                (poly-monomials (as-polynomial poly1))
+                                (poly-monomials (as-polynomial poly2))
+                                (poly-monomials (as-polynomial poly2))
+                                ()))))
         ))
 
 
