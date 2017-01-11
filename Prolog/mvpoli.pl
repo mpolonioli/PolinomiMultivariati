@@ -64,9 +64,19 @@ calc_total_degree([v(P, _) | VPs], Acc, R) :-
 %	vero quando Monomial `e il termine che rappresenta il
 %	monomio risultante dal “parsing” dell’espressione Expression
 
+% espressione che descrive un monomio
 as_monomial(Input, m(C, TD, SVP)) :-
 	parse_monomial(Input, [], 0, TD, VP, C),
+	!,
 	semplify_varpower(VP, SVP).
+
+% espressione che descrive un polinomio che semplificata e' di fatto un
+% monomio
+as_monomial(Input, R) :-
+	not(parse_monomial(Input, [], 0, _, _, _)),
+	!,
+	as_polynomial(Input, P),
+	monomials(P, [R | []]).
 
 
 %%      as_polynomial(Expression, Polynomial)
@@ -501,8 +511,9 @@ parse_monomial(Input, RVP, RTD, RTD, RVP, C) :-
 parse_polynomial(Input, App, RM) :-
 	Input =.. [+, Y, Z],
 	!,
-	as_monomial(Z, M),
-	append(App, [M], NApp),
+	parse_monomial(Z, [], 0, TD, VP, C),
+	semplify_varpower(VP, SVP),
+	append(App, [m(C, TD, SVP)], NApp),
 	parse_polynomial(Y, NApp, RM).
 
 
@@ -510,17 +521,19 @@ parse_polynomial(Input, App, RM) :-
 parse_polynomial(Input, App, RM) :-
 	Input =.. [-, Y, Z],
 	!,
-	as_monomial(Z, m(C, TD, VP)),
+	parse_monomial(Z, [], 0, TD, VP, C),
+	semplify_varpower(VP, SVP),
 	NC is -C,
-	append(App, [m(NC, TD, VP)], NApp),
+	append(App, [m(NC, TD, SVP)], NApp),
 	parse_polynomial(Y, NApp, RM).
 
 % primo monomio
 parse_polynomial(Input, App, RM) :-
 	% not_is_sign(X),
 	!,
-	as_monomial(Input, M),
-	append(App, [M], RM).
+	parse_monomial(Input, [], 0, TD, VP, C),
+	semplify_varpower(VP, SVP),
+	append(App, [m(C, TD, SVP)], RM).
 
 
 %%	is_variable_symbol(Symbol)
