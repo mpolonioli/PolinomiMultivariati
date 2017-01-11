@@ -27,9 +27,8 @@
 
 
 ; estrae il coefficente da un monomio
-(defun monomial-coefficient (m)
-      (second m)
-  )
+(defun m-coefficient (m)
+  (second m))
 
 
 ; estrae il grado totale da un monomio
@@ -163,7 +162,7 @@
 (defun semplify-monomial (m)
   (cond ((is-monomial m)
          (list 'm 
-               (monomial-coefficient m) 
+               (m-coefficient m) 
                (monomial-total-degree m)
                (semplify-vars-and-powers (monomial-vars-and-powers m))))
         
@@ -175,7 +174,8 @@
          (error "input non valido per la semplifica del monomio")))
   )
 
-; data una lista di strutture Monomial torna la lista di strutture Monomial semplificate
+; data una lista di strutture Monomial torna la lista di strutture Monomial 
+; semplificate
 (defun semplify-monomials (ms app)
   (let ((m (first ms)))
     (if (eq m nil)
@@ -246,7 +246,7 @@
            (reverse app))
           
           (T 
-           (error "input non valido per l'eliminazione delle variabili con esponente zero")))
+           (error "durante l'eliminazione delle variabili con esponente zero")))
     ))
 
 
@@ -265,7 +265,7 @@
               ((eq (string<= vp1-symbol vp2-symbol) 0)
                0)
               (T
-               (error "simboli di variabile non validi durante il confronto tra variabili"))
+               (error "durante il confronto tra variabili"))
               ))
     (error "input non valido per il confronto tra variabili"))
   )
@@ -279,11 +279,13 @@
 
 ; restituisce un polinomio parsato, semplificato e riordinato
 (defun as-polynomial (input)
-  (cond ((eq (first input) '+)
-      (semplify-polynomial (parse-polynomial (cdr input) ())))
+  (cond ((and (listp input)
+              (eq (first input) '+))
+         (semplify-polynomial (parse-polynomial (cdr input) ())))
+        
         (T
-         (error "input non valido per il parsing del polinomio"))
-    ))
+         (semplify-polynomial (list 'POLY (list (as-monomial input)))))
+        ))
 
 
 ; si occupa del parsing del polinomio
@@ -292,7 +294,8 @@
          (list 'poly app))
         
         (T
-         (parse-polynomial (cdr ms) (append (list (as-monomial (first ms))) app)))
+         (parse-polynomial (cdr ms) 
+                           (append (list (as-monomial (first ms))) app)))
         ))
 
 
@@ -301,21 +304,26 @@
 
   (if (is-polynomial poly)
 
-      (let ((ms (sort-monomials (zero-eater-m (semplify-monomials (poly-monomials poly) ()) ()))))
-        (list 'POLY (zero-eater-m (semplify-polynomial-r (first ms) (cdr ms) ()) ()))
+      (let ((ms (sort-monomials 
+                 (zero-eater-m 
+                  (semplify-monomials (poly-monomials poly) ()) 
+                  ()))))
+        (list 'POLY 
+              (zero-eater-m (semplify-polynomial-r (first ms) (cdr ms) ()) ()))
         )
     
     (error "input non valido per la semplifica del polinomio")
     ))
 
-; data una lista di strutture Monomial torna la lista di strutture Monomial semplificata
+; data una lista di strutture Monomial torna la lista di strutture Monomial
+; semplificata
 (defun semplify-polynomial-r (m1 ms app)
 
   (let ((m2 (first ms))
         (vps1 (monomial-vars-and-powers m1))
         (vps2 (monomial-vars-and-powers (first ms)))
-        (c1 (monomial-coefficient m1))
-        (c2 (monomial-coefficient (first ms)))
+        (c1 (m-coefficient m1))
+        (c2 (m-coefficient (first ms)))
         (td (monomial-total-degree m1)))
     
     (cond ((eq m1 nil)
@@ -349,10 +357,10 @@
     (cond ((eq m nil)
           app)
     
-          ((= (monomial-coefficient m) 0)
+          ((= (m-coefficient m) 0)
            (zero-eater-m (cdr ms) app))
 
-          ((not (= (monomial-coefficient m) 0))
+          ((not (= (m-coefficient m) 0))
            (zero-eater-m (cdr ms) (append app (list m))))
           
           (T
@@ -380,18 +388,25 @@
           ((and (eq vp1 nil)
                 (eq vp2 nil))
            1)
+
+          ((eq (string<= (varpower-symbol vp1) (varpower-symbol vp2)) 0)
+           0)
+
+          ((eq (string<= (varpower-symbol vp1) (varpower-symbol vp2)) nil)
+           nil)
           
-          ((and (eq (string<= (varpower-symbol vp1) (varpower-symbol vp2)) 0)
+          ((and (eq (string<= (varpower-symbol vp1) (varpower-symbol vp2)) 1)
                 (< (varpower-power vp1) (varpower-power vp2)))
            0)
           
-          ((and (eq (string<= (varpower-symbol vp1) (varpower-symbol vp2)) nil)
+          ((and (eq (string<= (varpower-symbol vp1) (varpower-symbol vp2)) 1)
                 (> (varpower-power vp1) (varpower-power vp2)))
            nil)
           
           ((and (eq (string<= (varpower-symbol vp1) (varpower-symbol vp2)) 1)
                 (= (varpower-power vp1) (varpower-power vp2)))
            (vars-and-powers<= (cdr vps1) (cdr vps2)))
+
           
           (T 
            (error "durante il confronto tra liste di variabili"))
@@ -411,9 +426,7 @@
       (let ((td1 (monomial-total-degree m1))
             (td2 (monomial-total-degree m2))
             (vps1 (monomial-vars-and-powers m1))
-            (vps2 (monomial-vars-and-powers m2))
-            (variables1 (variables m1))
-            (variables2 (variables m2)))
+            (vps2 (monomial-vars-and-powers m2)))
         
         (cond ((< td1 td2)
                0)
@@ -421,13 +434,8 @@
               ((> td1 td2)
                nil)
               
-              ((and (= td1 td2)
-                    (not (equal variables1 variables2)))
+              ((= td1 td2)
                (vars-and-powers<= vps1 vps2))
-
-              ((and (= td1 td2)
-                    (equal variables1 variables2))
-               (playoff-vars-and-powers<= vps1 vps2))
               
               (T
                (error "Durante il confronto tra monomi"))
@@ -457,12 +465,12 @@
            (sort (copy-seq (remove-duplicates (copy-seq app))) #'string<=))
           
           (T
-           (error "Input non valido per l'estrazione dei simboli di variabile da vps"))
+           (error "durante l'estrazione dei simboli di variabile da vps"))
           ))
   )
 
 
-; data una lista di monomi torna la lista dei simboli di variabile contenuti in essa
+; data una lista di monomi torna la lista dei simboli di variabile
 ; senza ripetizioni e ordinata in ordine lessicografico crescente
 (defun monomials-variables (ms app)
   
@@ -478,7 +486,7 @@
            )
 
           (T
-           (error "Input non valido per l'estrazione dei simboli di varabile da ms"))
+           (error "durante l'estrazione dei simboli di varabile da ms"))
           
           ))
   )    
@@ -503,7 +511,7 @@
 (defun varpowers (monomial)
   (if (is-monomial monomial)
       (monomial-vars-and-powers (semplify-monomial monomial))
-    (error "l'input di varpowers deve essere una struttura Monomial")
+    (varpowers (as-monomial monomial))
     ))
 
 
@@ -511,8 +519,8 @@
 (defun vars-of (monomial)
 
   (if (is-monomial monomial)
-      (monomial-variables monomial ())
-    (error "l'input di vars-of deve essere una struttura Monomial"))
+      (monomials-variables (list monomial) ())
+    (vars-of (as-monomial monomial)))
   )
 
 
@@ -521,8 +529,8 @@
 
   (if (is-monomial monomial)
       (monomial-total-degree monomial)
-    (error "l'input di monomial-degree deve essere una struttura Monomial")
-    ))
+    (monomial-degree (as-monomial monomial)))
+  )
 
 
 ; ritorna la lista ordinata dei monomi che appaiono in poly 
@@ -539,6 +547,21 @@
         ))
 
 
+; estrae il coefficente da un monomio
+(defun monomial-coefficient (m)
+  (cond ((and (is-monomial m)
+              (eq (m-coefficient m) nil))
+         0)
+
+        ((and (is-monomial m)
+              (not (eq (m-coefficient m) nil)))
+         (m-coefficient m))
+        
+        (T
+         (monomial-coefficient (as-monomial m)))
+    ))
+
+
 ; ritorna una lista dei coefficienti da una lista di monomi
 (defun monomials-coefficients (monomial-list app)
   (let ((monomial (first monomial-list)))
@@ -546,9 +569,10 @@
           app)
           
           (T
-           (monomials-coefficients (cdr monomial-list) (append 
-                                                        app 
-                                                        (list (monomial-coefficient monomial)))))
+           (monomials-coefficients (cdr monomial-list) 
+                                   (append 
+                                    app 
+                                    (list (monomial-coefficient monomial)))))
           ))
   )
 
@@ -558,11 +582,16 @@
   (cond ((is-monomial poly)
          (list (monomial-coefficent (semplify-monomial poly))))
         
-        ((is-polynomial poly)
-         (monomials-coefficients (monomials (semplify-polynomial poly)) ()))
+        ((and (is-polynomial poly)
+              (eq (monomials poly) nil))
+         (list 0))
+
+        ((and (is-polynomial poly)
+              (not (eq (monomials poly) nil)))
+         (monomials-coefficients (monomials poly) ()))
         
         (T
-         (monomials-coefficients (monomials (as-polynomial poly)) ()))
+         (coefficients (as-polynomial poly)))
         ))
 
 
@@ -572,7 +601,9 @@
          (monomial-degree (semplify-monomial poly)))
 
         ((is-polynomial poly)
-         (monomial-degree (first (reverse (monomials (semplify-polynomial poly))))))
+         (monomial-degree (first 
+                           (reverse 
+                            (monomials (semplify-polynomial poly))))))
 
         (T
          (monomial-degree (first (reverse (monomials (as-polynomial poly))))))
@@ -600,15 +631,21 @@
 
         ((and (is-monomial poly1)
               (is-polynomial poly2))
-         (semplify-polynomial (list 'poly (append (list poly1) (monomials poly2)))))
+         (semplify-polynomial (list 'poly 
+                                    (append (list poly1) 
+                                            (monomials poly2)))))
        
         ((and (is-polynomial poly1)
               (is-monomial poly2))
-         (semplify-polynomial (list 'poly (append (monomials poly1) (list poly2)))))
+         (semplify-polynomial (list 'poly 
+                                    (append (monomials poly1) 
+                                            (list poly2)))))
         
         ((and (is-polynomial poly1)
               (is-polynomial poly2))
-         (semplify-polynomial (list 'poly (append (monomials poly1) (monomials poly2)))))
+         (semplify-polynomial (list 'poly 
+                                    (append (monomials poly1) 
+                                            (monomials poly2)))))
         
         ((and (is-monomial poly1)
               (not (is-polynomial poly2))
@@ -645,18 +682,21 @@
         ))
 
 
-; data una lista di monomi ritorna una lista di monomi con segno dei coefficienti invertito
+; data una lista di monomi ritorna una lista di monomi con segno 
+; dei coefficienti invertito
 (defun invert-sign (monomials app)
   (let ((m (first monomials)))
     (cond ((eq m nil)
            app)
 
           (T
-           (invert-sign (cdr monomials) (append (list (list 'M 
-                                                            (* -1 (monomial-coefficient m))
-                                                            (monomial-total-degree m)
-                                                            (monomial-vars-and-powers m))) 
-                                                app)))
+           (invert-sign (cdr monomials) (append 
+                                         (list 
+                                          (list 'M 
+                                                (* -1 (m-coefficient m))
+                                                (monomial-total-degree m)
+                                                (monomial-vars-and-powers m))) 
+                                         app)))
           ))
   )
 
@@ -666,37 +706,47 @@
   (cond ((and (is-monomial poly1)
               (is-monomial poly2))
          (semplify-polynomial (list 'poly 
-                                    (append (list poly1)  (invert-sign (list poly2) ())))))
+                                    (append 
+                                     (list poly1)  
+                                     (invert-sign (list poly2) ())))))
         
         ((and (is-monomial poly1)
               (is-polynomial poly2))
          (semplify-polynomial (list 'poly 
-                                    (append (list poly1) (invert-sign (monomials poly2) ())))))
+                                    (append 
+                                     (list poly1) 
+                                     (invert-sign (monomials poly2) ())))))
         
         ((and (is-polynomial poly1)
               (is-monomial poly2))
          (semplify-polynomial (list 'poly 
-                                    (append (monomials poly1) (invert-sign (list poly2) ())))))
+                                    (append 
+                                     (monomials poly1) 
+                                     (invert-sign (list poly2) ())))))
         
         ((and (is-polynomial poly1)
               (is-polynomial poly2))
          (semplify-polynomial (list 'poly 
-                                    (append (monomials poly1) 
-                                            (invert-sign (monomials poly2) ())))))
+                                    (append 
+                                     (monomials poly1)
+                                     (invert-sign (monomials poly2) ())))))
 
         ((and (is-monomial poly1)
               (not (is-polynomial poly2))
               (not (is-monomial poly2)))
          (semplify-polynomial (list 'poly 
-                                    (append (list poly1) 
-                                            (invert-sign (monomials (as-polynomial poly2)))))))
+                                    (append 
+                                     (list poly1) 
+                                     (invert-sign 
+                                      (monomials (as-polynomial poly2)) ())))))
 
         ((and (not (is-monomial poly1))
               (not (is-polynomial poly1))
               (is-monomial poly2))
          (semplify-polynomial (list 'poly 
-                                    (append (monomials (as-polynomial poly1))
-                                            (invert-sign (list poly2))))))
+                                    (append 
+                                     (monomials (as-polynomial poly1))
+                                     (invert-sign (list poly2) ())))))
 
         ((and (is-polynomial poly1)
               (not (is-monomial poly2))
@@ -704,7 +754,8 @@
          (semplify-polynomial (list 'poly 
                                     (append
                                      (monomials poly1)
-                                     (invert-sign (monomials (as-polynomial poly2)))))))
+                                     (invert-sign 
+                                      (monomials (as-polynomial poly2) ()))))))
 
         ((and (not (is-monomial poly1))
              (not (is-polynomial poly1))
@@ -712,13 +763,15 @@
         (semplify-polynomial (list 'poly 
                                    (append
                                     (monomials (as-polynomial poly1))
-                                    (invert-sign (monomials poly2))))))
+                                    (invert-sign (monomials poly2) ())))))
         
         (T
          (semplify-polynomial (list 'poly 
                                     (append 
                                      (monomials (as-polynomial poly1)) 
-                                     (invert-sign (monomials (as-polynomial poly2)) ())))))
+                                     (invert-sign 
+                                      (monomials (as-polynomial poly2)) 
+                                      ())))))
         ))
 
 
@@ -728,7 +781,11 @@
               (is-monomial poly2))
          (semplify-polynomial (list 
                                'POLY 
-                               (polytimes-calc (list poly1) (list poly2) (list poly2) ()))))
+                               (polytimes-calc 
+                                (list poly1) 
+                                (list poly2) 
+                                (list poly2) 
+                                ()))))
         
         ((and (is-monomial poly1)
               (is-polynomial poly2))
@@ -817,8 +874,8 @@
 
 ; esegue il calcolo della moltiplicazione tra 2 liste di monomi
 (defun polytimes-calc (ms1 ms2 ms2-copy app)
-  (let ((c1 (monomial-coefficient (first ms1)))
-        (c2 (monomial-coefficient (first ms2)))
+  (let ((c1 (m-coefficient (first ms1)))
+        (c2 (m-coefficient (first ms2)))
         (td1 (monomial-total-degree (first ms1)))
         (td2 (monomial-total-degree (first ms2)))
         (vps1 (monomial-vars-and-powers (first ms1)))
@@ -844,8 +901,8 @@
   )
 
 
-; data una lista di simboli di variabile e una lista di valori produce la lista delle coppie 
-; simbolo-valore
+; data una lista di simboli di variabile e una lista di valori produce 
+; la lista delle coppie simbolo-valore
 (defun create-pairs-kv (variables values)
   (cond ((eq variables nil)
         nil)
@@ -866,9 +923,10 @@
         0)
         
         (T
-         (+ (* (monomial-coefficient (first ms)) (calc-vps-value 
-                                                  (monomial-vars-and-powers (first ms)) 
-                                                  pairs-kv)) 
+         (+ (* (m-coefficient (first ms)) 
+               (calc-vps-value 
+                (monomial-vars-and-powers (first ms)) 
+                pairs-kv)) 
             (polyval-calc (cdr ms) pairs-kv)))
         ))
 
@@ -885,7 +943,8 @@
         ))
 
 
-; data un simbolo e una lista simbolo-valore torna il valore associato al simbolo
+; data un simbolo e una lista simbolo-valore torna il valore associato 
+; al simbolo
 (defun get-varpower-value (k pairs-kv)
   (cond ((eq k (first (first pairs-kv)))
         (second (first pairs-kv)))
@@ -895,8 +954,9 @@
         ))
 
 
-; restituisce il valore Value del polinomio Polynomial, nel punto n-dimensionale rappresentato dalla
-; lista VariableValues, che contiene un valore per ogni variabile ottenuta con la funzione variables
+; restituisce il valore Value del polinomio Polynomial, 
+; nel punto n-dimensionale: rappresentato dalla lista VariableValues,
+; che contiene un valore per ogni variabile ottenuta con la funzione variables
 (defun polyval (poly variable-values)
   (cond ((is-monomial poly)
         (polyval-calc 
@@ -937,7 +997,7 @@
 ; tradizionale del termine polinomio associato alla lista di monomi monomials
 (defun pprint-monomials (monomials)
   (let ((m (first monomials))
-        (c (monomial-coefficient (first monomials)))
+        (c (m-coefficient (first monomials)))
         (vps (monomial-vars-and-powers (first monomials))))
     (cond ((eq monomials nil)
            (format t "~%"))
