@@ -15,14 +15,14 @@
 ; -----------------------------------------------------------------------------------------
 ;
 ;	== Introduzione ==
-;	Una delle prime e piu importanti applicazioni dei calcolatori fu la
+;	Una delle prime e piu' importanti applicazioni dei calcolatori fu la
 ;	manipolazione simbolica di operazioni matematiche.
 ;
 ;	In particolare, i sistemi noti come Computer Algebra Systems 
 ;	(cfr., Mathematica, Maple, Maxima, Axiom, etc.) si preoccupano di fornire 
 ;	funzionalità per la manipolazione di polinomi multivariati.
 ;
-;	Lo scopo di questo progetto e la costruzione di una libreria 
+;	Lo scopo di questo progetto e' la costruzione di una libreria 
 ;	in Common Lisp per la manipolazione di polinomi multivariati.
 ;
 ; -----------------------------------------------------------------------------------------
@@ -428,7 +428,7 @@
 ;
 ; -----------------------------------------------------------------------------------------
 ;
-;    Sono state specificate soltanto le funzioni pensate per essere utulizzate anche
+;    Sono state specificate soltanto le funzioni pensate per essere utilizzate anche
 ;    all'esterno della libreria.
 ;    
 ;    La libreria contiene anche altre funzioni necessarie per il funzionamento della

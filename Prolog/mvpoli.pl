@@ -14,7 +14,7 @@
 
 %%	is_varpower(VarPower)
 %
-%	vero se VarPower è un termine che rappresenta una variabile
+%	vero se VarPower e' un termine che rappresenta una variabile
 
 is_varpower(v(Power, VarSymbol)) :-
 	integer(Power),
