@@ -760,7 +760,7 @@
                                     (append
                                      (monomials poly1)
                                      (invert-sign 
-                                      (monomials (as-polynomial poly2) ()))))))
+                                      (monomials (as-polynomial poly2)) ())))))
 
         ((and (not (is-monomial poly1))
              (not (is-polynomial poly1))
