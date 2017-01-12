@@ -14,7 +14,7 @@
 %
 % ----------------------------------------------------------------------
 %
-%	== Introduzione ==
+%	== INTRODUZIONE ==
 %	Una delle piu' importanti applicazioni dei calcolatori fu la
 %	manipolazione simbolica di operazioni matematice.
 %
@@ -25,6 +25,17 @@
 %
 %	Lo scopo di questo progetto e' la costruzione di una libreria
 %	in Prolog per la manipolazione di polinomi multivariati
+%
+% ----------------------------------------------------------------------
+%
+%				CARICAMENTO DELLA LIBRERIA
+%
+% ----------------------------------------------------------------------
+%
+%	1 - Eseguire l'interprete Prolog nella cartella in cui è
+%	    presente il file "mvpoli.pl"
+%
+%	2 - Eseguire il predicato: consult("mvpoli.pl").
 %
 % ----------------------------------------------------------------------
 %
