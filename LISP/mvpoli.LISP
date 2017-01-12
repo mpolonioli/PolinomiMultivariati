@@ -88,11 +88,6 @@
             ((and (listp input) (eq '* (first input)))
              (semplify-monomial (parse-monomial input)))
 
-            ((and (listp input) 
-                  (eq '+ (first input))
-                  (eq (cdr (monomials (as-polynomial input))) nil))
-             (first (monomials (as-polynomial input))))
-
             (T 
              (error "espressione non corretta per il parsing del monomio"))
             ))

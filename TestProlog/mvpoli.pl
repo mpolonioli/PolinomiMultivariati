@@ -70,14 +70,6 @@ as_monomial(Input, m(C, TD, SVP)) :-
 	!,
 	semplify_varpower(VP, SVP).
 
-% espressione che descrive un polinomio che semplificata e' di fatto un
-% monomio
-as_monomial(Input, R) :-
-	not(parse_monomial(Input, [], 0, _, _, _)),
-	!,
-	as_polynomial(Input, P),
-	monomials(P, [R | []]).
-
 
 %%      as_polynomial(Expression, Polynomial)
 %

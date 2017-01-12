@@ -73,8 +73,6 @@ test(as_monomial_5) :- mvpoli:as_monomial(69*x^2*y^3, m(69, 5, [v(2, x), v(3, y)
 test(as_monomial_6) :- mvpoli:as_monomial(69*y^3*x^2*a^3, m(69, 8, [v(3, a), v(2, x), v(3, y)])).
 test(as_monomial_7) :- mvpoli:as_monomial(y^3*a^3*ab^3*a^6, m(1, 15, [v(9, a), v(3, ab), v(3, y)])).
 test(as_monomial_8) :- mvpoli:as_monomial(a*b*a^2*b^2, m(1, 6, [v(3, a), v(3, b)])).
-test(as_monomial_9) :- mvpoli:as_monomial(x+x+x, m(3, 1, [v(1, x)]).
-test(as_monomial_10) :- mvpoli:as_monomial(x+0+x, m(2, 1, [v(1, x)]). 
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
 test(as_polynomial_1) :- mvpoli:as_polynomial(42, poly([m(42, 0, [])])).
