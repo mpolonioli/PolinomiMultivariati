@@ -4,7 +4,7 @@
 
 
 %%% -*- Mode: Prolog -*-
-%%	polinomi.pl
+%%	mvpoli.pl
 
 
 % monomio = m(Coefficent, TotalDegree, VarsPowers)
@@ -1345,7 +1345,7 @@ pprint_variables([v(P, S) | VPs]) :-
 	write(' * '),
 	pprint_variables(VPs).
 
-%%% end of file polimomi.pl
+%%% end of file mvpoli.pl
 
 
 
