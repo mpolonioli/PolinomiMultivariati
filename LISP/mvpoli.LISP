@@ -5,7 +5,7 @@
 
 ;;;; -*- Mode: LISP -*-
 
-;; polinomi.LISP
+;; mvpoli.LISP
 
 
 ; Monomio : (m coefficient total-degree vars-n-powers)
@@ -83,13 +83,18 @@
              (list 'm (eval input) 0 ()))
 
             ((symbolp input)
-             (list 'm 1 1 (list 'v 1 input)))
+             (list 'm 1 1 (list (list 'v 1 input))))
 
             ((and (listp input) (eq '* (first input)))
              (semplify-monomial (parse-monomial input)))
 
+            ((and (listp input) 
+                  (eq '+ (first input))
+                  (eq (cdr (monomials (as-polynomial input))) nil))
+             (first (monomials (as-polynomial input))))
+
             (T 
-             (error "Errore: input non valido per il parsing del monomio"))
+             (error "espressione non corretta per il parsing del monomio"))
             ))
 
 
@@ -142,7 +147,7 @@
             ))
 
           (T 
-           (error "input non valido per il parsing delle variabili")
+           (error "espressione non corretta per il parsing delle variabili")
           ))
   ))
 
@@ -1029,4 +1034,4 @@
   )
 
 
-;; end-of-file -- polinomi.LISP
+;; end-of-file -- mvpoli.LISP
